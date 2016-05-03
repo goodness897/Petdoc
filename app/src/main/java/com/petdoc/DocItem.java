@@ -11,6 +11,8 @@ public class DocItem {
     private double latitude;
     private double longitude;
 
+
+
     public DocItem(String title, String address, String phone, double latitude, double longitude) {
         this.title = title;
         this.address = address;
