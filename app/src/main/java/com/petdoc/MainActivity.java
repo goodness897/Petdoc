@@ -16,7 +16,9 @@ import android.util.Log;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,6 +56,42 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mapFragment.setMyLocationEnabled(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mapFragment.setMyLocationEnabled(false);
+
+
+    }
+
     private void startLocationService() {
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         GPSListener gpsListener = new GPSListener();
@@ -73,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
                 return;
             }
             Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(lastLocation != null){
+            if (lastLocation != null) {
                 Double latitude = lastLocation.getLatitude();
                 Double longitude = lastLocation.getLongitude();
 
@@ -82,11 +120,10 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
             }
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
 
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 
     private class GPSListener implements LocationListener {
@@ -106,6 +143,24 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
             LatLng curPoint = new LatLng(latitude, longitude);
             mapFragment.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));
             mapFragment.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+            showItems(latitude, longitude);
+        }
+
+        private void showItems(Double latitude, Double longitude) {
+
+            MarkerOptions marker = new MarkerOptions();
+            for (int i = 0; i < docItemArrayList.size(); i++) {
+                marker.position(new LatLng(docItemArrayList.get(i).getLatitude(), docItemArrayList.get(i).getLongitude()));
+                marker.title(docItemArrayList.get(i).getTitle());
+                marker.snippet(docItemArrayList.get(i).getAddress());
+                marker.draggable(true);
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.hospital));
+                mapFragment.addMarker(marker);
+
+            }
+
+
         }
 
         @Override
@@ -132,15 +187,15 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
             StringBuilder jsonHtml = new StringBuilder();
             try {
                 java.net.URL url = new URL(params[0]);
-                HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-                if(conn != null){
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                if (conn != null) {
                     conn.setConnectTimeout(10000);
                     conn.setUseCaches(false);
-                    if(conn.getResponseCode() == HttpURLConnection.HTTP_OK){
+                    if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-                        for(;;){
+                        for (; ; ) {
                             String line = br.readLine();
-                            if(line == null) {
+                            if (line == null) {
                                 Log.i("MainActivity", "doInBackground 끝");
                                 running = true;
                                 break;
@@ -157,17 +212,17 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
             return jsonHtml.toString();
         }
 
-        protected void onPostExecute(String str){
+        protected void onPostExecute(String str) {
             String title;
             String address;
             String phone;
             double latitude;
             double longitude;
 
-            try{
+            try {
                 JSONObject root = new JSONObject(str);
                 JSONArray ja = root.getJSONArray("results");
-                for(int i = 0; i < ja.length(); i++){
+                for (int i = 0; i < ja.length(); i++) {
                     JSONObject jo = ja.getJSONObject(i);
                     title = jo.getString("title");
                     address = jo.getString("address");
