@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,8 +37,9 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
     public static ArrayList<DocItem> docItemArrayList = new ArrayList<DocItem>();
     private ListFragment listFragment;
 
-    private boolean running = false;
     private GoogleMap mapFragment;
+
+    private boolean start = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,10 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        mapFragment.setMyLocationEnabled(true);
+        if (mapFragment != null) {
+            mapFragment.setMyLocationEnabled(true);
+
+        }
     }
 
     @Override
@@ -87,7 +92,8 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        mapFragment.setMyLocationEnabled(false);
+        if (mapFragment != null)
+            mapFragment.setMyLocationEnabled(false);
 
 
     }
@@ -111,11 +117,12 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
                 return;
             }
             Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Double latitude = lastLocation.getLatitude();
+            Double longitude = lastLocation.getLongitude();
             if (lastLocation != null) {
-                Double latitude = lastLocation.getLatitude();
-                Double longitude = lastLocation.getLongitude();
 
-                Log.i("MainActivity", "현재 위치 : " + latitude + "," + longitude);
+                Log.i("MainActivity", "startLocation 실행, 현재 위치 : " + latitude + "," + longitude);
+                gpsListener.showCurrentLocation(latitude, longitude);
 
             }
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
@@ -135,31 +142,36 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
 
             showCurrentLocation(latitude, longitude);
 
-            Log.i("MainActivity", "현재 위치 : " + latitude + "," + longitude);
+            Log.i("MainActivity", "onLocationChanged 실행, 현재 위치 : " + latitude + "," + longitude);
 
         }
 
-        private void showCurrentLocation(Double latitude, Double longitude) {
+        public void showCurrentLocation(Double latitude, Double longitude) {
+
+            Log.i("MainActivity", "showCurrentLocation 실행 : " + latitude + "," + longitude);
             LatLng curPoint = new LatLng(latitude, longitude);
             mapFragment.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));
             mapFragment.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
             showItems(latitude, longitude);
+
+
         }
 
-        private void showItems(Double latitude, Double longitude) {
+        public void showItems(Double latitude, Double longitude) {
+            Toast.makeText(getApplicationContext(), "showItems 실행", Toast.LENGTH_LONG).show();
+            Log.i("MainActivity", "showItems 실행");
 
             MarkerOptions marker = new MarkerOptions();
             for (int i = 0; i < docItemArrayList.size(); i++) {
+                Log.i("MainActivity", "showItems 실행");
                 marker.position(new LatLng(docItemArrayList.get(i).getLatitude(), docItemArrayList.get(i).getLongitude()));
                 marker.title(docItemArrayList.get(i).getTitle());
                 marker.snippet(docItemArrayList.get(i).getAddress());
                 marker.draggable(true);
                 marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.hospital));
                 mapFragment.addMarker(marker);
-
             }
-
 
         }
 
@@ -197,7 +209,6 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
                             String line = br.readLine();
                             if (line == null) {
                                 Log.i("MainActivity", "doInBackground 끝");
-                                running = true;
                                 break;
                             }
                             jsonHtml.append(line + "\n");
