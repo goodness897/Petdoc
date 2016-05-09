@@ -3,6 +3,7 @@ package com.petdoc;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
 
     private GoogleMap mapFragment;
 
-    private boolean start = true;
+    MarkerOptions marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +95,8 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
         }
         if (mapFragment != null)
             mapFragment.setMyLocationEnabled(false);
-
-
+        /*if (marker == null)
+            marker = new MarkerOptions();*/
     }
 
     private void startLocationService() {
@@ -103,8 +104,6 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
         GPSListener gpsListener = new GPSListener();
         long minTime = 10000;
         float minDistance = 0;
-
-
         try {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -117,9 +116,11 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
                 return;
             }
             Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            Double latitude = lastLocation.getLatitude();
-            Double longitude = lastLocation.getLongitude();
+
             if (lastLocation != null) {
+
+                Double latitude = lastLocation.getLatitude();
+                Double longitude = lastLocation.getLongitude();
 
                 Log.i("MainActivity", "startLocation 실행, 현재 위치 : " + latitude + "," + longitude);
                 gpsListener.showCurrentLocation(latitude, longitude);
@@ -127,11 +128,11 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
             }
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
 
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     private class GPSListener implements LocationListener {
 
@@ -150,29 +151,18 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
 
             Log.i("MainActivity", "showCurrentLocation 실행 : " + latitude + "," + longitude);
             LatLng curPoint = new LatLng(latitude, longitude);
+
+            // # 1
+            /*CameraPosition cp = new CameraPosition.Builder().target((curPoint)).zoom(15).build();
+            mapFragment.animateCamera(CameraUpdateFactory.newCameraPosition(cp));*/
+
             mapFragment.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));
             mapFragment.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-            showItems(latitude, longitude);
-
-
-        }
-
-        public void showItems(Double latitude, Double longitude) {
-            Toast.makeText(getApplicationContext(), "showItems 실행", Toast.LENGTH_LONG).show();
-            Log.i("MainActivity", "showItems 실행");
-
-            MarkerOptions marker = new MarkerOptions();
-            for (int i = 0; i < docItemArrayList.size(); i++) {
-                Log.i("MainActivity", "showItems 실행");
-                marker.position(new LatLng(docItemArrayList.get(i).getLatitude(), docItemArrayList.get(i).getLongitude()));
-                marker.title(docItemArrayList.get(i).getTitle());
-                marker.snippet(docItemArrayList.get(i).getAddress());
-                marker.draggable(true);
-                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.hospital));
-                mapFragment.addMarker(marker);
-            }
-
+            /*if (marker == null){
+                marker = new MarkerOptions();
+                showItems(latitude, longitude);
+            }*/
         }
 
         @Override
@@ -193,6 +183,19 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
 
     private class phpDown extends AsyncTask<String, Integer, String> {
 
+        CustomProgressDialog asyncDialog = new CustomProgressDialog(MainActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+
+            //asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            asyncDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            // show dialog
+            asyncDialog.show();
+            super.onPreExecute();
+
+        }
+
         @Override
         protected String doInBackground(String... params) {
             Log.i("MainActivity", "doInBackground 실행중");
@@ -209,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
                             String line = br.readLine();
                             if (line == null) {
                                 Log.i("MainActivity", "doInBackground 끝");
+
                                 break;
                             }
                             jsonHtml.append(line + "\n");
@@ -242,12 +246,36 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
                     longitude = jo.getDouble("longitude");
                     docItemArrayList.add(new DocItem(title, address, phone, latitude, longitude));
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
             Log.i("MainActivity", docItemArrayList.get(0).getTitle() + docItemArrayList.get(0).getAddress() + docItemArrayList.get(0).getPhone());
+            // marker 추가
+            if (marker == null) {
+                marker = new MarkerOptions();
+                showItems();
+            }
             // listFragment.listView.invalidate();
             listFragment.adapter.notifyDataSetChanged();
+            asyncDialog.dismiss();
+        }
+
+    }
+
+    private void showItems() {
+        Toast.makeText(getApplicationContext(), "showItems 실행", Toast.LENGTH_LONG).show();
+        Log.i("MainActivity", "showItems 실행");
+
+
+        for (int i = 0; i < docItemArrayList.size(); i++) {
+            Log.i("MainActivity", "showItems 실행");
+            marker.position(new LatLng(docItemArrayList.get(i).getLatitude(), docItemArrayList.get(i).getLongitude()));
+            marker.title(docItemArrayList.get(i).getTitle());
+            marker.snippet(docItemArrayList.get(i).getAddress());
+            marker.draggable(true);
+            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.mark));
+            mapFragment.addMarker(marker);
         }
 
     }
