@@ -21,9 +21,11 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     public void petCastButtonClicked(View view) {
+
     }
 
     public void eventButtonClicked(View view) {
+
     }
 
 
