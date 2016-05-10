@@ -3,11 +3,9 @@ package com.petdoc;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
@@ -22,36 +20,23 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity implements ListFragment.ListItemSelectionCallback {
 
-    private final String URL = "http://192.168.11.20/alldata.php"; // php 주소
-    private phpDown task;
-    public static ArrayList<DocItem> docItemArrayList = new ArrayList<DocItem>();
     private ListFragment listFragment;
-
     private GoogleMap mapFragment;
-
+    LoadingActivity loadingActivity;
     MarkerOptions marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        task = new phpDown();
-        task.execute(URL);
+
         FragmentManager manager = getSupportFragmentManager();
         listFragment = (ListFragment) manager.findFragmentById(R.id.listFragment);
         mapFragment = ((SupportMapFragment) manager.findFragmentById(R.id.mapFragment)).getMap();
         startLocationService();
+        listFragment.adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -124,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
 
                 Log.i("MainActivity", "startLocation 실행, 현재 위치 : " + latitude + "," + longitude);
                 gpsListener.showCurrentLocation(latitude, longitude);
+                gpsListener.showItems();
 
             }
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
@@ -165,6 +151,23 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
             }*/
         }
 
+        private void showItems() {
+            Toast.makeText(getApplicationContext(), "showItems 실행", Toast.LENGTH_LONG).show();
+            Log.i("MainActivity", "showItems 실행");
+
+
+            for (int i = 0; i < loadingActivity.docItemArrayList.size(); i++) {
+                Log.i("MainActivity", "showItems 실행");
+                marker.position(new LatLng(loadingActivity.docItemArrayList.get(i).getLatitude(), loadingActivity.docItemArrayList.get(i).getLongitude()));
+                marker.title(loadingActivity.docItemArrayList.get(i).getTitle());
+                marker.snippet(loadingActivity.docItemArrayList.get(i).getAddress());
+                marker.draggable(true);
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.mark));
+                mapFragment.addMarker(marker);
+            }
+
+        }
+
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
 
@@ -181,104 +184,8 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
         }
     }
 
-    private class phpDown extends AsyncTask<String, Integer, String> {
-
-        CustomProgressDialog asyncDialog = new CustomProgressDialog(MainActivity.this);
-
-        @Override
-        protected void onPreExecute() {
-
-            //asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            asyncDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            // show dialog
-            asyncDialog.show();
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            Log.i("MainActivity", "doInBackground 실행중");
-            StringBuilder jsonHtml = new StringBuilder();
-            try {
-                java.net.URL url = new URL(params[0]);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                if (conn != null) {
-                    conn.setConnectTimeout(10000);
-                    conn.setUseCaches(false);
-                    if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-                        for (; ; ) {
-                            String line = br.readLine();
-                            if (line == null) {
-                                Log.i("MainActivity", "doInBackground 끝");
-
-                                break;
-                            }
-                            jsonHtml.append(line + "\n");
-                        }
-                        br.close();
-                    }
-                    conn.disconnect();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return jsonHtml.toString();
-        }
-
-        protected void onPostExecute(String str) {
-            String title;
-            String address;
-            String phone;
-            double latitude;
-            double longitude;
-
-            try {
-                JSONObject root = new JSONObject(str);
-                JSONArray ja = root.getJSONArray("results");
-                for (int i = 0; i < ja.length(); i++) {
-                    JSONObject jo = ja.getJSONObject(i);
-                    title = jo.getString("title");
-                    address = jo.getString("address");
-                    phone = jo.getString("phone");
-                    latitude = jo.getDouble("latitude");
-                    longitude = jo.getDouble("longitude");
-                    docItemArrayList.add(new DocItem(title, address, phone, latitude, longitude));
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            Log.i("MainActivity", docItemArrayList.get(0).getTitle() + docItemArrayList.get(0).getAddress() + docItemArrayList.get(0).getPhone());
-            // marker 추가
-            if (marker == null) {
-                marker = new MarkerOptions();
-                showItems();
-            }
-            // listFragment.listView.invalidate();
-            listFragment.adapter.notifyDataSetChanged();
-            asyncDialog.dismiss();
-        }
-
-    }
-
-    private void showItems() {
-        Toast.makeText(getApplicationContext(), "showItems 실행", Toast.LENGTH_LONG).show();
-        Log.i("MainActivity", "showItems 실행");
 
 
-        for (int i = 0; i < docItemArrayList.size(); i++) {
-            Log.i("MainActivity", "showItems 실행");
-            marker.position(new LatLng(docItemArrayList.get(i).getLatitude(), docItemArrayList.get(i).getLongitude()));
-            marker.title(docItemArrayList.get(i).getTitle());
-            marker.snippet(docItemArrayList.get(i).getAddress());
-            marker.draggable(true);
-            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.mark));
-            mapFragment.addMarker(marker);
-        }
-
-    }
 
 
 }

@@ -1,40 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.petdoc.IntroActivity">
+    tools:context="com.petdoc.IntroActivity"
+    android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="동물병원찾기"
-        android:id="@+id/button"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="97dp"
-        android:onClick="searchButtonClicked" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#FFD47F"
+        android:layout_marginBottom="10dp">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="펫캐스트"
-        android:id="@+id/button2"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="petCastButtonClicked" />
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:onClick="searchButtonClicked"
+            android:background="@drawable/hospital_btn" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="이벤트모아보기"
-        android:id="@+id/button3"
-        android:layout_below="@+id/button2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="74dp"
-        android:onClick="eventButtonClicked" />
-</RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp">
+
+        <Button
+            android:drawableLeft="@drawable/literature_16"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:text="펫캐스트"
+            android:textColor="#ffffff"
+            android:id="@+id/button2"
+            android:onClick="petCastButtonClicked"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="left|center"
+            android:background="#D47B7F"
+            android:src="@drawable/literature_16"
+            android:layout_marginBottom="5dp" />
+
+        <Button
+            android:drawableLeft="@drawable/gift_24"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:text="이벤트 모아보기"
+            android:textColor="#ffffff"
+            android:id="@+id/button3"
+            android:onClick="eventButtonClicked"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="left|center"
+            android:background="#5F9488"
+            android:layout_marginTop="5dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

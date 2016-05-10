@@ -16,11 +16,11 @@ import java.util.ArrayList;
 public class DocItemListAdapter extends BaseAdapter {
     private Context mContext;
 
-    MainActivity main;
+    LoadingActivity loadingActivity;
 
     public DocItemListAdapter(Context context, ArrayList<DocItem> datas){
 
-        main.docItemArrayList = datas;
+        loadingActivity.docItemArrayList = datas;
         mContext = context;
     }
 
@@ -30,13 +30,13 @@ public class DocItemListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return main.docItemArrayList.size();
+        return loadingActivity.docItemArrayList.size();
 
     }
 
     @Override
     public Object getItem(int position) {
-        return main.docItemArrayList.get(position);
+        return loadingActivity.docItemArrayList.get(position);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class DocItemListAdapter extends BaseAdapter {
         TextView docAddress = (TextView) convertView.findViewById(R.id.dataAddress);
         TextView docPhone = (TextView) convertView.findViewById(R.id.dataPhone);
 
-        DocItem docItem = main.docItemArrayList.get(position);
+        DocItem docItem = loadingActivity.docItemArrayList.get(position);
         // 이미지 추가 해야함
         // docImage.setImage
         docTitle.setText(docItem.getTitle());

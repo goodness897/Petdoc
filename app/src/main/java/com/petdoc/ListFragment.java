@@ -1,6 +1,7 @@
 package com.petdoc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ public class ListFragment extends Fragment {
     MainActivity main;
     ListView listView;
     DocItemListAdapter adapter;
+    LoadingActivity loadingActivity;
 
     public static interface ListItemSelectionCallback {
         public void onListItemSelected(int position);
@@ -39,16 +41,19 @@ public class ListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_list, container, false);
 
-        adapter = new DocItemListAdapter(getContext(), main.docItemArrayList);
+        adapter = new DocItemListAdapter(getContext(), loadingActivity.docItemArrayList);
         listView = (ListView) rootView.findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (callback != null) {
+                /*if (callback != null) {
                     callback.onListItemSelected(position);
-                }
+                }*/
+                Intent intent = new Intent(getContext(), DocDetailActivity.class);
+                intent.putExtra("position", position);
+                startActivity(intent);
             }
         });
 
