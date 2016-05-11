@@ -3,7 +3,6 @@ package com.petdoc;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -19,7 +18,9 @@ import java.util.ArrayList;
 
 public class LoadingActivity extends AppCompatActivity {
 
-    private final String URL = "http://192.168.11.20/alldata.php"; // php 주소
+    //private final String URL = "http://192.168.11.20/alldata.php"; // php 주소
+    private final String URL = "http://192.168.219.146/alldata.php"; // php 주소
+
     private phpDown task;
     public static ArrayList<DocItem> docItemArrayList = new ArrayList<DocItem>();
     private TextView textView;
@@ -28,7 +29,7 @@ public class LoadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
-        textView = (TextView) findViewById(R.id.textView);
+
 
         task = new phpDown();
         task.execute(URL);
@@ -42,6 +43,11 @@ public class LoadingActivity extends AppCompatActivity {
     private class phpDown extends AsyncTask<String, Integer, String> {
 
         // CustomProgressDialog asyncDialog = new CustomProgressDialog(Loading.this);
+        String title;
+        String address;
+        String phone;
+        double latitude;
+        double longitude;
 
         @Override
         protected void onPreExecute() {
@@ -50,12 +56,10 @@ public class LoadingActivity extends AppCompatActivity {
             //asyncDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
             // show dialog
             //asyncDialog.show();
-
-
             super.onPreExecute();
+            textView = (TextView) findViewById(R.id.textView);
 
         }
-
         @Override
         protected String doInBackground(String... params) {
             Log.i("MainActivity", "doInBackground 실행중");
@@ -71,7 +75,7 @@ public class LoadingActivity extends AppCompatActivity {
                         for (; ; ) {
                             String line = br.readLine();
                             if (line == null) {
-                                Log.i("MainActivity", "doInBackground 끝");
+                                Log.i("MainActivity", "readline() 끝");
                                 break;
                             }
                             jsonHtml.append(line + "\n");
@@ -83,39 +87,57 @@ public class LoadingActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return jsonHtml.toString();
-        }
-
-        protected void onPostExecute(String str) {
-            String title;
-            String address;
-            String phone;
-            double latitude;
-            double longitude;
 
             try {
-                JSONObject root = new JSONObject(str);
+                JSONObject root = new JSONObject(jsonHtml.toString());
                 JSONArray ja = root.getJSONArray("results");
 
                 if(docItemArrayList.size() == 0) {
-
                     for (int i = 0; i < ja.length(); i++) {
                         JSONObject jo = ja.getJSONObject(i);
+                        publishProgress(i);
+                        Thread.sleep(5);
                         title = jo.getString("title");
                         address = jo.getString("address");
                         phone = jo.getString("phone");
                         latitude = jo.getDouble("latitude");
                         longitude = jo.getDouble("longitude");
+
                         docItemArrayList.add(new DocItem(title, address, phone, latitude, longitude));
                     }
+                } else {
+                    docItemArrayList.clear();
+                    for (int i = 0; i < ja.length(); i++) {
+                        JSONObject jo = ja.getJSONObject(i);
+                        publishProgress(i);
+                        Thread.sleep(10);
+                        title = jo.getString("title");
+                        address = jo.getString("address");
+                        phone = jo.getString("phone");
+                        latitude = jo.getDouble("latitude");
+                        longitude = jo.getDouble("longitude");
+
+                        docItemArrayList.add(new DocItem(title, address, phone, latitude, longitude));
+                    }
+
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.i("MainActivity", docItemArrayList.get(0).getTitle() + docItemArrayList.get(0).getAddress() + docItemArrayList.get(0).getPhone());
+            return jsonHtml.toString();
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            textView.setText(values[0].toString());
+        }
 
-            final Handler handler = new Handler();
+        protected void onPostExecute(String str) {
+
+            Log.i("MainActivity", docItemArrayList.get(0).getTitle() + docItemArrayList.get(0).getAddress() + docItemArrayList.get(0).getPhone());
+            onNewActivity();
+
+            /*final Handler handler = new Handler();
             Thread thread = new Thread() {
                 @Override
                 public void run() {
@@ -138,7 +160,7 @@ public class LoadingActivity extends AppCompatActivity {
 
                 }
             };
-            thread.start();
+            thread.start();*/
 
             // marker 추가
             /*if (marker == null) {
