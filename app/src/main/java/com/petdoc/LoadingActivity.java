@@ -103,21 +103,21 @@ public class LoadingActivity extends AppCompatActivity {
                         latitude = jo.getDouble("latitude");
                         longitude = jo.getDouble("longitude");
 
-                        docItemArrayList.add(new DocItem(title, address, phone, latitude, longitude));
+                        docItemArrayList.add(new DocItem(i + 1, title, address, phone, latitude, longitude));
                     }
                 } else {
                     docItemArrayList.clear();
                     for (int i = 0; i < ja.length(); i++) {
                         JSONObject jo = ja.getJSONObject(i);
                         publishProgress(i);
-                        Thread.sleep(10);
+                        Thread.sleep(5);
                         title = jo.getString("title");
                         address = jo.getString("address");
                         phone = jo.getString("phone");
                         latitude = jo.getDouble("latitude");
                         longitude = jo.getDouble("longitude");
 
-                        docItemArrayList.add(new DocItem(title, address, phone, latitude, longitude));
+                        docItemArrayList.add(new DocItem(i + 1, title, address, phone, latitude, longitude));
                     }
 
                 }

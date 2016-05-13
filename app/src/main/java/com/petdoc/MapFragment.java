@@ -1,5 +1,6 @@
 package com.petdoc;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,21 @@ import android.widget.ImageView;
 public class MapFragment extends Fragment {
 
     ImageView imageView;
+
+    public static interface ListItemSelectionCallback {
+        public void onListItemSelected(int position);
+    }
+    public ListItemSelectionCallback callback;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof ListItemSelectionCallback){
+            callback = (ListItemSelectionCallback) context;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

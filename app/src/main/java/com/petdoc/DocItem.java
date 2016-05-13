@@ -5,6 +5,7 @@ package com.petdoc;
  */
 public class DocItem {
 
+    private int id;
     private String title;
     private String address;
     private String phone;
@@ -13,7 +14,8 @@ public class DocItem {
 
 
 
-    public DocItem(String title, String address, String phone, double latitude, double longitude) {
+    public DocItem(int id, String title, String address, String phone, double latitude, double longitude) {
+        this.id = id;
         this.title = title;
         this.address = address;
         this.phone = phone;

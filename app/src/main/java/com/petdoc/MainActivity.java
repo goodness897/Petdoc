@@ -21,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends AppCompatActivity implements ListFragment.ListItemSelectionCallback {
@@ -38,6 +39,13 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
         FragmentManager manager = getSupportFragmentManager();
         listFragment = (ListFragment) manager.findFragmentById(R.id.listFragment);
         mapFragment = ((SupportMapFragment) manager.findFragmentById(R.id.mapFragment)).getMap();
+        mapFragment.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Toast.makeText(getApplicationContext(), "마커 id : " + marker.getId(), Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
 
 
         try {
