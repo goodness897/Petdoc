@@ -18,8 +18,8 @@ import java.util.ArrayList;
 
 public class LoadingActivity extends AppCompatActivity {
 
-    //private final String URL = "http://192.168.11.20/alldata.php"; // php 주소
-    private final String URL = "http://192.168.219.146/alldata.php"; // php 주소
+    private final String URL = "http://192.168.11.20/alldata.php"; // php 주소
+    //private final String URL = "http://192.168.219.146/alldata.php"; // php 주소
 
     private phpDown task;
     public static ArrayList<DocItem> docItemArrayList = new ArrayList<DocItem>();
@@ -42,7 +42,7 @@ public class LoadingActivity extends AppCompatActivity {
 
     private class phpDown extends AsyncTask<String, Integer, String> {
 
-        // CustomProgressDialog asyncDialog = new CustomProgressDialog(Loading.this);
+
         String title;
         String address;
         String phone;
@@ -137,39 +137,6 @@ public class LoadingActivity extends AppCompatActivity {
             Log.i("MainActivity", docItemArrayList.get(0).getTitle() + docItemArrayList.get(0).getAddress() + docItemArrayList.get(0).getPhone());
             onNewActivity();
 
-            /*final Handler handler = new Handler();
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-
-                    for (int i = 0; i < docItemArrayList.size(); i++) {
-                        final int finalI = i;
-                        try {
-                            Thread.sleep(10);
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    textView.setText(String.valueOf(finalI));
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } // for 문 종료
-                    onNewActivity();
-
-                }
-            };
-            thread.start();*/
-
-            // marker 추가
-            /*if (marker == null) {
-                marker = new MarkerOptions();
-                showItems();
-            }*/
-            // listFragment.listView.invalidate();
-            /*listFragment.adapter.notifyDataSetChanged();
-            asyncDialog.dismiss();*/
         }
 
     }

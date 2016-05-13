@@ -1,17 +1,26 @@
 package com.petdoc;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class IntroActivity extends AppCompatActivity {
+    ActionBar ab;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_intro);
+        ab = this.getSupportActionBar();
+        setCustomActionBar(ab);
     }
 
     public void searchButtonClicked(View view) {
@@ -25,6 +34,26 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     public void eventButtonClicked(View view) {
+
+    }
+    private void setCustomActionBar(ActionBar ab) {
+
+        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        ab.setDisplayShowCustomEnabled(true);
+        ab.setCustomView(R.layout.custom_actionbar);
+        ab.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        View view = ab.getCustomView();
+
+
+        ImageButton searchButton = (ImageButton)view.findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
 
     }
 

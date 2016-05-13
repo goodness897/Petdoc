@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Petdoc</string>
+    <string name="app_namek">펫독</string>
+    <string name="_24">24시 병원</string>
+    <string name="searchHospital">내 주변 병원 찾기</string>
+    <string name="eventView">이벤트 모아보기</string>
+    <string name="petCast">펫캐스트</string>
+
+
 </resources>

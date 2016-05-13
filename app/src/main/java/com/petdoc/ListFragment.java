@@ -51,7 +51,6 @@ public class ListFragment extends Fragment {
                 /*if (callback != null) {
                     callback.onListItemSelected(position);
                 }*/
-
                 Intent intent = new Intent(getContext(), DocDetailActivity.class);
                 intent.putExtra("position", position);
                 startActivity(intent);

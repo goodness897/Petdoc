@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
         listFragment = (ListFragment) manager.findFragmentById(R.id.listFragment);
         mapFragment = ((SupportMapFragment) manager.findFragmentById(R.id.mapFragment)).getMap();
 
+
         try {
             MapsInitializer.initialize(this);
         } catch (Exception e) {
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
 
         listFragment.adapter.notifyDataSetChanged();
     }
+
+
 
     private void checkDangerousPermissions() {
         String[] permissions = {
@@ -159,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.List
             marker.title(loadingActivity.docItemArrayList.get(i).getTitle());
             marker.snippet(loadingActivity.docItemArrayList.get(i).getAddress());
             marker.draggable(true);
-            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.mark));
+            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
             mapFragment.addMarker(marker);
         }
 

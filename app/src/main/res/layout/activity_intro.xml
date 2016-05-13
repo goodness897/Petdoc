@@ -4,66 +4,90 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.petdoc.IntroActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#ffffff">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="#FFD47F"
-        android:layout_marginBottom="10dp">
-
-        <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:onClick="searchButtonClicked"
-            android:background="@drawable/hospital_btn" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="#ffffff"
         android:layout_marginBottom="10dp">
 
         <Button
-            android:drawableLeft="@drawable/literature_16"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:onClick="searchButtonClicked"
+
+            android:drawableTop="@drawable/hospital"
             android:padding="10dp"
             android:drawablePadding="10dp"
-            android:layout_weight="1"
-            android:layout_height="0dp"
-            android:layout_width="match_parent"
-            android:text="펫캐스트"
+            android:text="@string/searchHospital"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
             android:textColor="#ffffff"
-            android:id="@+id/button2"
-            android:onClick="petCastButtonClicked"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:gravity="left|center"
-            android:background="#D47B7F"
-            android:src="@drawable/literature_16"
-            android:layout_marginBottom="5dp" />
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:background="@color/myprimaryColor"
+            android:layout_marginTop="0dp"/>
+        <Button
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:onClick="searchButtonClicked"
+
+            android:drawableTop="@drawable/all_day"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:text="@string/_24"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:background="#E67E22"
+            android:layout_marginTop="0dp"/>
 
         <Button
-            android:drawableLeft="@drawable/gift_24"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:onClick="searchButtonClicked"
+
+            android:drawableTop="@drawable/petcast"
             android:padding="10dp"
             android:drawablePadding="10dp"
+            android:text="@string/petCast"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:background="#9B59B6"
+            android:layout_marginTop="0dp"/>
+
+        <Button
             android:layout_weight="1"
             android:layout_height="0dp"
             android:layout_width="match_parent"
-            android:text="이벤트 모아보기"
-            android:textColor="#ffffff"
-            android:id="@+id/button3"
             android:onClick="eventButtonClicked"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:gravity="left|center"
+
+            android:drawableTop="@drawable/gift"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:text="@string/eventView"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
             android:background="#5F9488"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="0dp" />
 
     </LinearLayout>
 

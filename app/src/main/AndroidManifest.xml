@@ -45,10 +45,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".DocDetailActivity" />
-        <activity android:name=".CustomProgressDialog" />
-        <activity android:name=".IntroActivity"></activity>
+        <activity android:name=".IntroActivity"
+            android:theme="@style/CustomTheme"/>
     </application>
 
 </manifest>
