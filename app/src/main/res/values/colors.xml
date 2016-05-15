@@ -10,4 +10,12 @@
     <!-- 액션바 -->
     <color name="actionbar_background">#F1C40F</color>
     <color name="actionbar_text">#ffffff</color>
+
+    <!-- ListView color -->
+    <color name="pressed_color">#4d90fe</color>
+    <color name="default_color">#ffffff</color>
+
+    <color name="RED">#FF0000</color>
+    <color name="GREEN">#008000</color>
+    <color name="BLACK">#000000</color>
 </resources>

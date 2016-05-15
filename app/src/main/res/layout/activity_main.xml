@@ -11,8 +11,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:name="com.petdoc.MapFragment"
-        android:id="@+id/mapFragment"
-        class="com.google.android.gms.maps.SupportMapFragment"/>
+        android:id="@+id/mapFragment" />
 
     <fragment
         android:layout_width="match_parent"

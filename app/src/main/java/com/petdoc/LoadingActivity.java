@@ -18,8 +18,8 @@ import java.util.ArrayList;
 
 public class LoadingActivity extends AppCompatActivity {
 
-    private final String URL = "http://192.168.11.20/alldata.php"; // php 주소
-    //private final String URL = "http://192.168.219.146/alldata.php"; // php 주소
+    //private final String URL = "http://192.168.11.20/alldata.php"; // php 주소
+    private final String URL = "http://192.168.219.146/alldata.php"; // php 주소
 
     private phpDown task;
     public static ArrayList<DocItem> docItemArrayList = new ArrayList<DocItem>();
@@ -109,7 +109,7 @@ public class LoadingActivity extends AppCompatActivity {
                     docItemArrayList.clear();
                     for (int i = 0; i < ja.length(); i++) {
                         JSONObject jo = ja.getJSONObject(i);
-                        publishProgress(i);
+                        publishProgress(i + 1);
                         Thread.sleep(5);
                         title = jo.getString("title");
                         address = jo.getString("address");
