@@ -15,6 +15,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -27,6 +36,8 @@ public class ListFragment extends Fragment {
     DocItemListAdapter adapter;
     LoadingActivity loadingActivity;
     private int mSelectedItem;
+    private double list_latitude;
+    private double list_longitude;
 
     @Override
     public void onAttach(Context context) {
@@ -47,13 +58,11 @@ public class ListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Intent intent = new Intent(getContext(), DocDetailActivity.class);
                 intent.putExtra("position", position);
                 startActivity(intent);
             }
         });
-
         return rootView;
     }
 
@@ -73,10 +82,16 @@ public class ListFragment extends Fragment {
     public void setSeletedItem(int position){
         Log.i("MainActivity","ListFragment position : " + position);
         mSelectedItem = position;
-        listView.setItemChecked(position, true);
-        listView.setSelection(position);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView.setItemChecked(position-1, true);
         listView.smoothScrollToPosition(position);
         adapter.notifyDataSetChanged();
+    }
+    public void setDistance(double latitude, double longitude){
+        list_latitude = latitude;
+        list_longitude = longitude;
+        Log.i("MainActivity","setDistance 호출 : " + list_latitude + "," + list_longitude);
+
 
     }
 
@@ -118,19 +133,93 @@ public class ListFragment extends Fragment {
                 LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.listitem, parent, false);
             }
-
-
             ImageView docImage = (ImageView) convertView.findViewById(R.id.dataImage);
             TextView docTitle = (TextView) convertView.findViewById(R.id.dataTitle);
             TextView docAddress = (TextView) convertView.findViewById(R.id.dataAddress);
             TextView docPhone = (TextView) convertView.findViewById(R.id.dataPhone);
             DocItem docItem = loadingActivity.docItemArrayList.get(position);
+            String distance = GetDistance(list_latitude, list_longitude, position);
             // 이미지 추가 해야함
             // docImage.setImage
             docTitle.setText(docItem.getTitle());
             docAddress.setText(docItem.getAddress());
-            docPhone.setText(docItem.getPhone());
+            // docPhone.setText(docItem.getPhone());
+            docPhone.setText(distance);
+            notifyDataSetChanged();
             return convertView;
         }
+    }
+
+    private String GetDistance(double latitude, double longitude, int position) {
+        int iDistance = 0;
+        String sDistance = "";
+        Log.d("xxx","latitude : "+latitude + ", longitude : " + longitude);
+        StringBuilder urlString = new StringBuilder();
+        urlString.append("http://maps.googleapis.com/maps/api/directions/json?");
+        urlString.append("origin=");//from
+        urlString.append(latitude);
+        urlString.append(",");
+        urlString.append(longitude);
+        urlString.append("&destination=");//to
+        urlString.append(LoadingActivity.docItemArrayList.get(position).getLatitude());
+        urlString.append(",");
+        urlString.append(LoadingActivity.docItemArrayList.get(position).getLongitude());
+        urlString.append("&mode=walking&sensor=true");
+        Log.d("xxx","URL="+urlString.toString());
+
+        // get the JSON And parse it to get the directions data.
+        HttpURLConnection urlConnection= null;
+        URL url = null;
+
+        try {
+            url = new URL(urlString.toString());
+            urlConnection=(HttpURLConnection)url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoOutput(true);
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+
+            InputStream inStream = urlConnection.getInputStream();
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(inStream));
+
+            String temp, response = "";
+            while((temp = bReader.readLine()) != null){
+                //Parse data
+                response += temp;
+            }
+            //Close the reader, stream & connection
+            bReader.close();
+            inStream.close();
+            urlConnection.disconnect();
+            //Sortout JSONresponse
+            JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
+            JSONArray array = object.getJSONArray("routes");
+            //Log.d("JSON","array: "+array.toString());
+
+            //Routes is a combination of objects and arrays
+            JSONObject routes = array.getJSONObject(0);
+            //Log.d("JSON","routes: "+routes.toString());
+
+            String summary = routes.getString("summary");
+            //Log.d("JSON","summary: "+summary);
+
+            JSONArray legs = routes.getJSONArray("legs");
+            //Log.d("JSON","legs: "+legs.toString());
+
+            JSONObject steps = legs.getJSONObject(0);
+            //Log.d("JSON","steps: "+steps.toString());
+
+            JSONObject distance = steps.getJSONObject("distance");
+            //Log.d("JSON","distance: "+distance.toString());
+
+            sDistance = distance.getString("text");
+            iDistance = distance.getInt("value");
+            Log.d("xxx","Distance : " + sDistance);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return sDistance;
+
     }
 }

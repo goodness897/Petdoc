@@ -38,9 +38,11 @@ public class MapFragment extends Fragment {
     private GoogleMap map;
     private MarkerOptions marker;
     LoadingActivity loadingActivity;
+    private GPSListener gpsListener;
 
     public static interface MapMarkerSelectionCallback {
         public void onMapMarkerSeleted(int position);
+        public void setDistance(double latitude, double longitude);
     }
     public MapMarkerSelectionCallback callback;
 
@@ -55,8 +57,7 @@ public class MapFragment extends Fragment {
             fm.beginTransaction().replace(R.id.map, fragment).commit();
         }
         try {
-            MapsInitializer.initialize(getActivity());
-
+            MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -125,6 +126,12 @@ public class MapFragment extends Fragment {
         Log.i("MainActivity","MapFragment onCreateView 실행");
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_map, container, false);
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return rootView;
 
     }
@@ -151,16 +158,12 @@ public class MapFragment extends Fragment {
                 return false;
             }
         });
-
-
     }
-
     private int searchPosition(String title) {
         int position;
         for (int i = 0; i < loadingActivity.docItemArrayList.size(); i++){
             if(loadingActivity.docItemArrayList.get(i).getTitle().equals(title)){
                 position = loadingActivity.docItemArrayList.get(i).getId();
-
                 return position;
             }
         }
@@ -188,7 +191,7 @@ public class MapFragment extends Fragment {
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         // 리스너 객체 생성
-        GPSListener gpsListener = new GPSListener();
+        gpsListener = new GPSListener();
         long minTime = 10000;
         float minDistance = 0;
         try {
@@ -196,18 +199,17 @@ public class MapFragment extends Fragment {
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
             // 네트워크 기반 위치 요청
             manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, gpsListener);
-
             Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (lastLocation != null) {
                 Double latitude = lastLocation.getLatitude();
                 Double longitude = lastLocation.getLongitude();
                 Log.i("MainActivity", "startLocation 실행, 현재 위치 : " + latitude + "," + longitude);
+                gpsListener.showCurrentLocation(latitude, longitude);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -238,7 +240,11 @@ public class MapFragment extends Fragment {
             Double latitude = location.getLatitude();
             Double longitude = location.getLongitude();
 
-            showCurrentLocation(latitude, longitude);
+            if (callback != null){
+                callback.setDistance(latitude, longitude);
+                Log.i("MainActivity", "setDistance 실행");
+            }
+            // showCurrentLocation(latitude, longitude);
 
             Log.i("MainActivity", "onLocationChanged 실행, 현재 위치 : " + latitude + "," + longitude);
 
@@ -248,7 +254,6 @@ public class MapFragment extends Fragment {
             Log.i("MainActivity", "showCurrentLocation 실행 : " + latitude + "," + longitude);
             // 현재 위치를 이용해 LatLng 객체 생성
             LatLng curPoint = new LatLng(latitude, longitude);
-
             CameraPosition cp = new CameraPosition.Builder().target((curPoint)).zoom(15).build();
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
             // mapFragment.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));

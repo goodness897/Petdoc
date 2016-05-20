@@ -17,7 +17,7 @@
         android:textStyle="bold" />
 
     <ImageButton
-        android:id="@+id/search_button"
+        android:id="@+id/drawer_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentLeft="true"
@@ -28,7 +28,7 @@
 
 
     <ImageButton
-        android:id="@+id/login_button"
+        android:id="@+id/search_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentRight="true"

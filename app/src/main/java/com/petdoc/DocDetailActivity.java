@@ -59,7 +59,6 @@ public class DocDetailActivity extends AppCompatActivity {
             phoneTextView.setText(loadingActivity.docItemArrayList.get(position).getPhone());
             phone = loadingActivity.docItemArrayList.get(position).getPhone();
         }
-
     }
 
     public void reviewButtonClicked(View view) {

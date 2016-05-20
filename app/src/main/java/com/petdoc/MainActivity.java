@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.google.android.gms.maps.MapsInitializer;
+
 public class MainActivity extends AppCompatActivity implements MapFragment.MapMarkerSelectionCallback {
 
     private ListFragment listFragment;
@@ -19,6 +21,11 @@ public class MainActivity extends AppCompatActivity implements MapFragment.MapMa
         listFragment = (ListFragment) manager.findFragmentById(R.id.listFragment);
         mapFragment = (MapFragment) manager.findFragmentById(R.id.mapFragment);
         listFragment.adapter.notifyDataSetChanged();
+        try {
+            MapsInitializer.initialize(getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -41,5 +48,10 @@ public class MainActivity extends AppCompatActivity implements MapFragment.MapMa
     @Override
     public void onMapMarkerSeleted(int position) {
         listFragment.setSeletedItem(position);
+    }
+
+    @Override
+    public void setDistance(double latitude, double longitude) {
+        listFragment.setDistance(latitude, longitude);
     }
 }

@@ -50,6 +50,9 @@
         <activity android:name=".DocDetailActivity" />
         <activity android:name=".IntroActivity"
             android:theme="@style/CustomTheme"/>
+        <activity android:name=".SearchActivity"
+            android:theme="@style/CustomTheme"
+            />
     </application>
 
 </manifest>

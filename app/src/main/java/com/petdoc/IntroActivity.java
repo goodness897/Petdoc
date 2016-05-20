@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 public class IntroActivity extends AppCompatActivity {
     ActionBar ab;
@@ -43,13 +42,12 @@ public class IntroActivity extends AppCompatActivity {
         ab.setCustomView(R.layout.custom_actionbar);
         ab.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         View view = ab.getCustomView();
-
-
         ImageButton searchButton = (ImageButton)view.findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intent);
             }
         });
 

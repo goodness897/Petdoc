@@ -2,9 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@drawable/bg_key">
-
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/dataImage"
@@ -24,7 +22,8 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="16dp"
-            android:padding="4dp"/>
+            android:padding="4dp"
+            android:textColor="@drawable/bg_key"/>
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
