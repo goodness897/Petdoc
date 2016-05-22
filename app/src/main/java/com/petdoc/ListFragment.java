@@ -106,7 +106,6 @@ public class ListFragment extends Fragment {
         private Context mContext;
 
         LoadingActivity loadingActivity;
-        String distance = "";
 
         public DocItemListAdapter(Context context, ArrayList<DocItem> datas){
 
@@ -146,7 +145,7 @@ public class ListFragment extends Fragment {
             TextView docAddress = (TextView) convertView.findViewById(R.id.dataAddress);
             docPhone = (TextView) convertView.findViewById(R.id.dataPhone);
             DocItem docItem = loadingActivity.docItemArrayList.get(position);
-            distance = getDistance(cur_latitude, cur_longitude, list_latitude, list_longitude);
+            String distance = getDistance(cur_latitude, cur_longitude, list_latitude, list_longitude);
             // 이미지 추가 해야함
             // docImage.setImage
             docTitle.setText(docItem.getTitle());
@@ -168,19 +167,19 @@ public class ListFragment extends Fragment {
                 + "," + current_longitude + "&destination=" + dis_latitude + "," + dis_longitude + "&mode=transit");
         Log.d("xxx", "URL=" + urlString.toString());
         ConnectThread thread = new ConnectThread(urlString.toString());
+
         thread.start();
-        sDistance = thread.getDistance();
-        Log.d("xxx", sDistance);
+
         return sDistance;
 
     }
     class ConnectThread extends Thread {
-        private String urlStr;
-        private String finalSDistance;
+        String urlStr;
 
         public ConnectThread(String inStr) {
             urlStr = inStr;
         }
+
         public void run() {
             try {
                 final String output = request(urlStr);
@@ -211,19 +210,21 @@ public class ListFragment extends Fragment {
             //Log.d("JSON","steps: "+steps.toString());
             JSONObject distance = steps.getJSONObject("distance");
             //Log.d("JSON","distance: "+distance.toString());*/
+                    sDistance = distance;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                finalSDistance = distance;
+                final String finalSDistance = sDistance;
+                handler.post(new Runnable() {
+                    public void run() {
+                    }
+                });
 
             } catch(Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        public String getDistance() {
-            return finalSDistance;
-        }
         private String request(String urlStr) {
             StringBuilder output = new StringBuilder();
             try {
