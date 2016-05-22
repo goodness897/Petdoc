@@ -90,7 +90,7 @@ public class SearchActivity extends AppCompatActivity {
         View view = ab.getCustomView();
         ImageButton backButton = (ImageButton)view.findViewById(R.id.drawer_button);
         ImageButton nullButton = (ImageButton)view.findViewById(R.id.search_button);
-
+        nullButton.setImageResource(0);
         backButton.setImageResource(R.drawable.back);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override

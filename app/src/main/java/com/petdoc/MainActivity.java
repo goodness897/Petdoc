@@ -51,7 +51,9 @@ public class MainActivity extends AppCompatActivity implements MapFragment.MapMa
     }
 
     @Override
-    public void setDistance(double latitude, double longitude) {
-        listFragment.setDistance(latitude, longitude);
+    public void setDistance(double current_latitude, double current_longitude, double dis_latitude, double dis_longitude) {
+        listFragment.setDistance(current_latitude, current_longitude, dis_latitude, dis_longitude);
     }
+
+
 }

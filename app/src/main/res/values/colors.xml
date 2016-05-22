@@ -18,4 +18,17 @@
     <color name="RED">#FF0000</color>
     <color name="GREEN">#008000</color>
     <color name="BLACK">#000000</color>
+
+    <!--Intro color -->
+    <drawable name="searchButton">#F1C40F</drawable>
+    <drawable name="searchButtonClicked">#D7AF0D</drawable>
+
+    <drawable name="alldayButton">#E67E22</drawable>
+    <drawable name="alldayButtonClicked">#CC701E</drawable>
+
+    <drawable name="petcastButton">#9B59B6</drawable>
+    <drawable name="petcastButtonClicked">#854D9C</drawable>
+
+    <drawable name="eventButton">#5F9488</drawable>
+    <drawable name="eventButtonClicked">#4F7A71</drawable>
 </resources>

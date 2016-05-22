@@ -39,10 +39,12 @@ public class MapFragment extends Fragment {
     private MarkerOptions marker;
     LoadingActivity loadingActivity;
     private GPSListener gpsListener;
+    private double latitude;
+    private double longitude;
 
     public static interface MapMarkerSelectionCallback {
         public void onMapMarkerSeleted(int position);
-        public void setDistance(double latitude, double longitude);
+        public void setDistance(double current_latitude, double current_longitude, double dis_latitude, double dis_longitude);
     }
     public MapMarkerSelectionCallback callback;
 
@@ -143,6 +145,8 @@ public class MapFragment extends Fragment {
         if (map == null){
             map = fragment.getMap();
             showItems();
+            gpsListener.showCurrentLocation(latitude, longitude);
+
         }
         map.setMyLocationEnabled(true);
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -189,7 +193,6 @@ public class MapFragment extends Fragment {
     private void startLocationService() {
         // 위치 관리자 객체 참조
         LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
         // 리스너 객체 생성
         gpsListener = new GPSListener();
         long minTime = 10000;
@@ -199,10 +202,12 @@ public class MapFragment extends Fragment {
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
             // 네트워크 기반 위치 요청
             manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, gpsListener);
-            Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            //Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location lastLocation = manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
             if (lastLocation != null) {
-                Double latitude = lastLocation.getLatitude();
-                Double longitude = lastLocation.getLongitude();
+                latitude = lastLocation.getLatitude();
+                longitude = lastLocation.getLongitude();
                 Log.i("MainActivity", "startLocation 실행, 현재 위치 : " + latitude + "," + longitude);
                 gpsListener.showCurrentLocation(latitude, longitude);
             }
@@ -229,6 +234,10 @@ public class MapFragment extends Fragment {
             marker.draggable(true);
             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.mark));
             map.addMarker(marker);
+            if (callback != null){
+                callback.setDistance(latitude, longitude, loadingActivity.docItemArrayList.get(i).getLatitude(), loadingActivity.docItemArrayList.get(i).getLongitude());
+                Log.i("xxx", "setDistance 실행");
+            }
 
         }
 
@@ -239,11 +248,6 @@ public class MapFragment extends Fragment {
         public void onLocationChanged(Location location) {
             Double latitude = location.getLatitude();
             Double longitude = location.getLongitude();
-
-            if (callback != null){
-                callback.setDistance(latitude, longitude);
-                Log.i("MainActivity", "setDistance 실행");
-            }
             // showCurrentLocation(latitude, longitude);
 
             Log.i("MainActivity", "onLocationChanged 실행, 현재 위치 : " + latitude + "," + longitude);

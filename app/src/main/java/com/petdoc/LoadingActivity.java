@@ -17,7 +17,9 @@ public class LoadingActivity extends AppCompatActivity {
 
     //private final String URL = "http://192.168.11.20/alldata.php"; //  php 주소
     //private final String URL = "http://192.168.219.146/alldata.php"; // php 주소
-    private static final String ROOT_URL = "http://192.168.11.20/";
+    //private static final String ROOT_URL = "http://192.168.11.20/";
+    private static final String ROOT_URL = "http://192.168.219.197/";
+
 
     // private phpDown task;
     public static ArrayList<DocItem> docItemArrayList = null;
@@ -66,6 +68,7 @@ public class LoadingActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 //you can handle the errors here
+                finish();
             }
         });
     }
