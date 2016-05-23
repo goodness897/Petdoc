@@ -77,7 +77,6 @@ public class SearchActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), DocDetailActivity.class);
                 intent.putExtra("position", id-1);
                 startActivity(intent);
-
             }
         }
     }

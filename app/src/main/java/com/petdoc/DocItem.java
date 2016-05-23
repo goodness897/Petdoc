@@ -11,8 +11,7 @@ public class DocItem {
     private String phone;
     private double latitude;
     private double longitude;
-
-
+    private String distance;
 
     public DocItem(int id, String title, String address, String phone, double latitude, double longitude) {
         this.id = id;
@@ -21,6 +20,27 @@ public class DocItem {
         this.phone = phone;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+    public DocItem(int id, String title, String address, String phone, double latitude, double longitude, String distance) {
+        this.id = id;
+        this.title = title;
+        this.address = address;
+        this.phone = phone;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.distance = distance;
+    }
+    public DocItem(String distance) {
+
+        this.distance = distance;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 
     public int getId() {

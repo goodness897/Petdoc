@@ -38,16 +38,13 @@ public class DocDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:" + phone));
                 startActivity(intent);
-
             }
         });
-
         Intent intent = getIntent();
         if (intent != null) {
             position = intent.getIntExtra("position", 0);
             setData(position);
         }
-
 
     }
 
@@ -62,5 +59,6 @@ public class DocDetailActivity extends AppCompatActivity {
     }
 
     public void reviewButtonClicked(View view) {
+
     }
 }

@@ -6,6 +6,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -27,8 +29,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.lang.reflect.Field;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 /**
  * Created by STU on 2016-05-03.
  */
@@ -41,10 +50,13 @@ public class MapFragment extends Fragment {
     private GPSListener gpsListener;
     private double latitude;
     private double longitude;
+    public static ArrayList<DocItem> doc_list = null;
+    Handler handler = new Handler();
+    String finalSDistance;
+
 
     public static interface MapMarkerSelectionCallback {
         public void onMapMarkerSeleted(int position);
-        public void setDistance(double current_latitude, double current_longitude, double dis_latitude, double dis_longitude);
     }
     public MapMarkerSelectionCallback callback;
 
@@ -54,6 +66,7 @@ public class MapFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         FragmentManager fm = getChildFragmentManager();
         fragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
+        doc_list = new ArrayList<>();
         if (fragment == null) {
             fragment = SupportMapFragment.newInstance();
             fm.beginTransaction().replace(R.id.map, fragment).commit();
@@ -152,23 +165,22 @@ public class MapFragment extends Fragment {
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-
                 String title = marker.getTitle();
-                int position = searchPosition(title);
+                int id = searchPosition(title);
                 if(callback != null){
-                    Log.i("MainActivity","MapFragment callback 실행, position : " + position);
-                    callback.onMapMarkerSeleted(position);
+                    Log.i("MainActivity","MapFragment callback 실행, id 값 : " + id);
+                    callback.onMapMarkerSeleted(id);
                 }
                 return false;
             }
         });
     }
     private int searchPosition(String title) {
-        int position;
+        int id;
         for (int i = 0; i < loadingActivity.docItemArrayList.size(); i++){
             if(loadingActivity.docItemArrayList.get(i).getTitle().equals(title)){
-                position = loadingActivity.docItemArrayList.get(i).getId();
-                return position;
+                id = loadingActivity.docItemArrayList.get(i).getId();
+                return id;
             }
         }
         return 0;
@@ -224,36 +236,69 @@ public class MapFragment extends Fragment {
     private void showItems() {
         Toast.makeText(getContext(), "showItems 실행", Toast.LENGTH_LONG).show();
         Log.i("MainActivity", "showItems 실행");
-
+        ArrayList<DocItem> key = null;
+        key = loadingActivity.docItemArrayList;
+        double distance = 0.0;
+        String s_distance = null;
         marker = new MarkerOptions();
-        for (int i = 0; i < loadingActivity.docItemArrayList.size(); i++) {
-            Log.i("MainActivity", "showItems 실행");
-            marker.position(new LatLng(loadingActivity.docItemArrayList.get(i).getLatitude(), loadingActivity.docItemArrayList.get(i).getLongitude()));
-            marker.title(loadingActivity.docItemArrayList.get(i).getTitle());
-            marker.snippet(loadingActivity.docItemArrayList.get(i).getAddress());
-            marker.draggable(true);
-            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.mark));
-            map.addMarker(marker);
-            if (callback != null){
-                callback.setDistance(latitude, longitude, loadingActivity.docItemArrayList.get(i).getLatitude(), loadingActivity.docItemArrayList.get(i).getLongitude());
-                Log.i("xxx", "setDistance 실행");
-            }
-
+        if (doc_list.size() != 0){
+            doc_list.clear();
         }
-
+        for (int i = 0; i < key.size(); i++) {
+            // 현재 위치와 거리 계산 후 반경안에 드는 것만 마커를 띄워주기
+            distance = calDistance(latitude, longitude, key.get(i).getLatitude(), key.get(i).getLongitude());
+            if(distance < 20000) { // m 단위
+                Log.i("MainActivity", "showItems 실행");
+                marker.position(new LatLng(key.get(i).getLatitude(), key.get(i).getLongitude()));
+                marker.title(key.get(i).getTitle());
+                marker.snippet(key.get(i).getAddress());
+                marker.draggable(true);
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.pet_marker));
+                map.addMarker(marker);
+                doc_list.add(new DocItem(key.get(i).getId(), key.get(i).getTitle()
+                        ,key.get(i).getAddress(), key.get(i).getPhone(), key.get(i).getLatitude(), key.get(i).getLongitude()));
+                getDistance(latitude, longitude, key.get(i).getLatitude(), key.get(i).getLongitude(), key.get(i).getId());
+            }
+        }
     }
+    public double calDistance(double lat1, double lon1, double lat2, double lon2){
+
+        double theta, dist;
+        theta = lon1 - lon2;
+        dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
+                * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;    // 단위 mile 에서 km 변환.
+        dist = dist * 1000.0;      // 단위  km 에서 m 로 변환
+
+        return dist;
+    }
+
+    // 주어진 도(degree) 값을 라디언으로 변환
+    private double deg2rad(double deg){
+        return (double)(deg * Math.PI / (double)180d);
+    }
+
+    // 주어진 라디언(radian) 값을 도(degree) 값으로 변환
+    private double rad2deg(double rad){
+        return (double)(rad * (double)180d / Math.PI);
+    }
+
     private class GPSListener implements LocationListener {
 
         @Override
         public void onLocationChanged(Location location) {
-            Double latitude = location.getLatitude();
-            Double longitude = location.getLongitude();
+            Double current_latitude = location.getLatitude();
+            Double current_longitude = location.getLongitude();
             // showCurrentLocation(latitude, longitude);
-
+            double distance = calDistance(latitude, longitude, current_latitude, current_longitude);
+            if (distance > 100 ) {
+                showItems();
+            }
             Log.i("MainActivity", "onLocationChanged 실행, 현재 위치 : " + latitude + "," + longitude);
-
         }
-
         public void showCurrentLocation(Double latitude, Double longitude) {
             Log.i("MainActivity", "showCurrentLocation 실행 : " + latitude + "," + longitude);
             // 현재 위치를 이용해 LatLng 객체 생성
@@ -279,5 +324,153 @@ public class MapFragment extends Fragment {
         public void onProviderDisabled(String provider) {
 
         }
+    }
+    private void getDistance(double current_latitude, double current_longitude, double dis_latitude, double dis_longitude, int id) {
+        StringBuilder urlString = null;
+        String distance = null;
+        Log.d("xxx","latitude : "+dis_latitude + ", longitude : " + dis_longitude);
+        urlString = new StringBuilder();
+        urlString.append("http://maps.googleapis.com/maps/api/directions/json?origin=" + current_latitude
+                + "," + current_longitude + "&destination=" + dis_latitude + "," + dis_longitude + "&mode=transit");
+        Log.d("xxx", "URL=" + urlString.toString());
+        ConnectThread thread = new ConnectThread(urlString.toString(), id);
+        thread.start();
+
+        /*
+            final String output = request(urlString.toString());
+            JSONObject object = null;
+            JSONArray legs = null;
+            JSONObject step = null;
+            try {
+                object = new JSONObject(output);
+                JSONArray array = object.getJSONArray("routes");
+                for (int i = 0; i < array.length(); i++) {
+                    legs = ((JSONObject) array.get(i)).getJSONArray("legs");
+                    for (int j = 0; j < legs.length(); j++) {
+                        step = ((JSONObject) legs.get(j)).getJSONObject("distance");
+                        distance = step.getString("text");
+                        Log.d("xxx","distance : " + distance);
+                    }
+                }
+                //Log.d("JSON","array: "+array.toString());
+                //Routes is a combination of objects and arrays
+                //JSONObject routes = array.getJSONObject(0);
+                //Log.d("JSON","routes: "+routes.toString());
+                //JSONArray legs = routes.getJSONArray("legs");
+                //Log.d("JSON","legs: "+legs.toString());
+                //JSONObject steps = legs.getJSONObject(0);
+                //JSONObject distance = steps.getJSONObject("distance");
+                /*//*JSONObject steps = legs.getJSONObject(0);
+                //Log.d("JSON","steps: "+steps.toString());
+                //JSONObject distance = steps.getJSONObject("distance");
+                //Log.d("JSON","distance: "+distance.toString());*//**//*
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+
+        // return distance;
+
+
+    }
+    class ConnectThread extends Thread {
+        String urlStr;
+        int id;
+
+        public ConnectThread(String inStr, int id) {
+            urlStr = inStr;
+            this.id = id;
+        }
+
+        public void run() {
+            try {
+                final String output = request(urlStr);
+                JSONObject object = null;
+                JSONArray legs = null;
+                JSONObject step = null;
+                String distance = null;
+                try {
+                    object = new JSONObject(output);
+                    JSONArray array = object.getJSONArray("routes");
+                    for(int i =0; i < array.length(); i++){
+                        legs = ((JSONObject)array.get(i)).getJSONArray("legs");
+                        for(int j = 0; j < legs.length(); j++){
+                            step = ((JSONObject)legs.get(j)).getJSONObject("distance");
+                            distance = step.getString("text");
+                        }
+                    }
+                    //Log.d("JSON","array: "+array.toString());
+                    //Routes is a combination of objects and arrays
+                    //JSONObject routes = array.getJSONObject(0);
+                    //Log.d("JSON","routes: "+routes.toString());
+                    //JSONArray legs = routes.getJSONArray("legs");
+                    //Log.d("JSON","legs: "+legs.toString());
+                    //JSONObject steps = legs.getJSONObject(0);
+                    //JSONObject distance = steps.getJSONObject("distance");
+            //*JSONObject steps = legs.getJSONObject(0);
+            //Log.d("JSON","steps: "+steps.toString());
+            //JSONObject distance = steps.getJSONObject("distance");
+            //Log.d("JSON","distance: "+distance.toString());*//*
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                finalSDistance = distance;
+                Message msg = Message.obtain();
+                msg.what = 0;
+                msg.obj = finalSDistance;
+                handler.sendMessage(msg);
+               /* handler.post(new Runnable() {
+                    public void run() {
+                        int i = checkId(id);
+                        doc_list.add(i ,new DocItem(finalSDistance));
+                    }
+                });*/
+
+
+            } catch(Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        private int checkId(int id) {
+            for(int i = 0; i < doc_list.size(); i++){
+                if(doc_list.get(i).getId() == id){
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        private String request(String urlStr) {
+            StringBuilder output = new StringBuilder();
+            try {
+                URL url = new URL(urlStr);
+                HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                if (conn != null) {
+                    conn.setConnectTimeout(10000);
+                    conn.setRequestMethod("GET");
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+                    int resCode = conn.getResponseCode();
+                    if (resCode == HttpURLConnection.HTTP_OK) {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream())) ;
+                        String line = null;
+                        while(true) {
+                            line = reader.readLine();
+                            if (line == null) {
+                                break;
+                            }
+                            output.append(line + "\n");
+                        }
+                        reader.close();
+                        conn.disconnect();
+                    }
+                }
+            } catch(Exception ex) {
+                Log.e("SampleHTTP", "Exception in processing response.", ex);
+                ex.printStackTrace();
+            }
+
+            return output.toString();
+        }
+
     }
 }

@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity implements MapFragment.MapMa
         FragmentManager manager = getSupportFragmentManager();
         listFragment = (ListFragment) manager.findFragmentById(R.id.listFragment);
         mapFragment = (MapFragment) manager.findFragmentById(R.id.mapFragment);
-        listFragment.adapter.notifyDataSetChanged();
         try {
             MapsInitializer.initialize(getApplicationContext());
         } catch (Exception e) {
@@ -49,11 +48,5 @@ public class MainActivity extends AppCompatActivity implements MapFragment.MapMa
     public void onMapMarkerSeleted(int position) {
         listFragment.setSeletedItem(position);
     }
-
-    @Override
-    public void setDistance(double current_latitude, double current_longitude, double dis_latitude, double dis_longitude) {
-        listFragment.setDistance(current_latitude, current_longitude, dis_latitude, dis_longitude);
-    }
-
 
 }
