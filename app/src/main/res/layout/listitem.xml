@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
@@ -12,7 +12,7 @@
         android:layout_gravity="center_vertical"
          />
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -25,11 +25,10 @@
             android:padding="4dp"
             android:textColor="@drawable/bg_key"/>
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="4dp">
-
             <TextView
                 android:id="@+id/dataAddress"
                 android:layout_width="0dp"
@@ -39,7 +38,6 @@
                 android:id="@+id/dataPhone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:textSize="16dp"
                 android:textStyle="bold"
                 android:paddingRight="4dp"

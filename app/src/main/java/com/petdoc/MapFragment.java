@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,7 +41,7 @@ import java.util.ArrayList;
  * Created by STU on 2016-05-03.
  */
 public class MapFragment extends Fragment {
-
+    private double from_to_distance = 10000;
     private SupportMapFragment fragment;
     private GoogleMap map;
     private MarkerOptions marker;
@@ -50,9 +49,17 @@ public class MapFragment extends Fragment {
     private GPSListener gpsListener;
     private double latitude;
     private double longitude;
-    public static ArrayList<DocItem> doc_list = null;
-    Handler handler = new Handler();
+    public static ArrayList<DocItem> doc_list = new ArrayList<>();
+    ArrayList<String> distance_list = new ArrayList<>();
     String finalSDistance;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle b = msg.getData();
+            finalSDistance = b.getString("My Distance");
+            distance_list.add(finalSDistance);
+        }
+    };
 
 
     public static interface MapMarkerSelectionCallback {
@@ -66,7 +73,6 @@ public class MapFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         FragmentManager fm = getChildFragmentManager();
         fragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
-        doc_list = new ArrayList<>();
         if (fragment == null) {
             fragment = SupportMapFragment.newInstance();
             fm.beginTransaction().replace(R.id.map, fragment).commit();
@@ -78,7 +84,7 @@ public class MapFragment extends Fragment {
         }
         startLocationService();
         checkDangerousPermissions();
-
+        showDistance();
 
 
 
@@ -234,20 +240,15 @@ public class MapFragment extends Fragment {
     }
 
     private void showItems() {
-        Toast.makeText(getContext(), "showItems 실행", Toast.LENGTH_LONG).show();
-        Log.i("MainActivity", "showItems 실행");
         ArrayList<DocItem> key = null;
         key = loadingActivity.docItemArrayList;
         double distance = 0.0;
-        String s_distance = null;
+        int j = 0;
         marker = new MarkerOptions();
-        if (doc_list.size() != 0){
-            doc_list.clear();
-        }
         for (int i = 0; i < key.size(); i++) {
             // 현재 위치와 거리 계산 후 반경안에 드는 것만 마커를 띄워주기
             distance = calDistance(latitude, longitude, key.get(i).getLatitude(), key.get(i).getLongitude());
-            if(distance < 20000) { // m 단위
+            if(distance < from_to_distance) { // m 단위
                 Log.i("MainActivity", "showItems 실행");
                 marker.position(new LatLng(key.get(i).getLatitude(), key.get(i).getLongitude()));
                 marker.title(key.get(i).getTitle());
@@ -257,9 +258,23 @@ public class MapFragment extends Fragment {
                 map.addMarker(marker);
                 doc_list.add(new DocItem(key.get(i).getId(), key.get(i).getTitle()
                         ,key.get(i).getAddress(), key.get(i).getPhone(), key.get(i).getLatitude(), key.get(i).getLongitude()));
-                getDistance(latitude, longitude, key.get(i).getLatitude(), key.get(i).getLongitude(), key.get(i).getId());
+                j++;
             }
         }
+    }
+    private void showDistance() {
+        ArrayList<DocItem> key = null;
+        key = loadingActivity.docItemArrayList;
+        double distance = 0.0;
+        for (int i = 0; i < key.size(); i++) {
+            // 현재 위치와 거리 계산 후 반경안에 드는 것만 마커를 띄워주기
+            distance = calDistance(latitude, longitude, key.get(i).getLatitude(), key.get(i).getLongitude());
+            if(distance < from_to_distance) { // m 단위
+                Log.i("MainActivity", "showItems 실행");
+                getDistance(latitude, longitude, key.get(i).getLatitude(), key.get(i).getLongitude());
+            }
+        }
+
     }
     public double calDistance(double lat1, double lon1, double lat2, double lon2){
 
@@ -307,7 +322,6 @@ public class MapFragment extends Fragment {
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
             // mapFragment.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));
             map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
         }
 
         @Override
@@ -325,7 +339,7 @@ public class MapFragment extends Fragment {
 
         }
     }
-    private void getDistance(double current_latitude, double current_longitude, double dis_latitude, double dis_longitude, int id) {
+    private void getDistance(double current_latitude, double current_longitude, double dis_latitude, double dis_longitude) {
         StringBuilder urlString = null;
         String distance = null;
         Log.d("xxx","latitude : "+dis_latitude + ", longitude : " + dis_longitude);
@@ -333,7 +347,7 @@ public class MapFragment extends Fragment {
         urlString.append("http://maps.googleapis.com/maps/api/directions/json?origin=" + current_latitude
                 + "," + current_longitude + "&destination=" + dis_latitude + "," + dis_longitude + "&mode=transit");
         Log.d("xxx", "URL=" + urlString.toString());
-        ConnectThread thread = new ConnectThread(urlString.toString(), id);
+        ConnectThread thread = new ConnectThread(urlString.toString());
         thread.start();
 
         /*
@@ -369,18 +383,13 @@ public class MapFragment extends Fragment {
             }*/
 
         // return distance;
-
-
     }
     class ConnectThread extends Thread {
         String urlStr;
-        int id;
 
-        public ConnectThread(String inStr, int id) {
+        public ConnectThread(String inStr) {
             urlStr = inStr;
-            this.id = id;
         }
-
         public void run() {
             try {
                 final String output = request(urlStr);
@@ -413,10 +422,12 @@ public class MapFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                Message msg = new Message();
+                Bundle b = new Bundle();
                 finalSDistance = distance;
-                Message msg = Message.obtain();
-                msg.what = 0;
-                msg.obj = finalSDistance;
+                Log.i("xxx", "distance : " + finalSDistance);
+                b.putString("My Distance", finalSDistance);
+                msg.setData(b);
                 handler.sendMessage(msg);
                /* handler.post(new Runnable() {
                     public void run() {
@@ -425,20 +436,10 @@ public class MapFragment extends Fragment {
                     }
                 });*/
 
-
             } catch(Exception ex) {
                 ex.printStackTrace();
             }
         }
-        private int checkId(int id) {
-            for(int i = 0; i < doc_list.size(); i++){
-                if(doc_list.get(i).getId() == id){
-                    return i;
-                }
-            }
-            return 0;
-        }
-
         private String request(String urlStr) {
             StringBuilder output = new StringBuilder();
             try {

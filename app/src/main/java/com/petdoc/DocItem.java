@@ -30,10 +30,6 @@ public class DocItem {
         this.longitude = longitude;
         this.distance = distance;
     }
-    public DocItem(String distance) {
-
-        this.distance = distance;
-    }
 
     public String getDistance() {
         return distance;

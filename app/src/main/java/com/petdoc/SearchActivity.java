@@ -55,8 +55,6 @@ public class SearchActivity extends AppCompatActivity {
             if(LoadingActivity.docItemArrayList.get(i).getTitle().contains(editText.getText().toString())) {
                 items.add(LoadingActivity.docItemArrayList.get(i).getTitle());
             }
-
-
         }
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
         listView.setAdapter(adapter);
@@ -97,9 +95,6 @@ public class SearchActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
-
     }
 
 }

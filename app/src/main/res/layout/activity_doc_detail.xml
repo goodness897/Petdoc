@@ -6,7 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 
-    tools:context="com.petdoc.DocDetailActivity">
+    tools:context="com.petdoc.DocDetailActivity"
+    android:background="#ffffff">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/no_image_available" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,34 +26,104 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:orientation="vertical"
+                android:background="@color/myprimaryColor">
+                <TextView
+                    android:id="@+id/dataTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="New Text"
+                    android:textStyle="bold"
+                    android:textSize="24dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="12dp"
+                    android:textColor="#ffffff" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" />
+                <TextView
 
-        <TextView
-            android:id="@+id/dataTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="New Text"
-            android:textStyle="bold"
-            android:textSize="20dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="New Text"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="12dp"
+                    android:textColor="#ffffff"
+                    android:textSize="16dp" />
 
-        <TextView
-            android:id="@+id/dataAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="New Text" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp">
 
-        <TextView
-            android:id="@+id/dataPhone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="New Text" />
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:src="@drawable/location"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1" />
+                <TextView
+                    android:id="@+id/dataAddress"
+                    android:text="New Text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16dp"
+                    android:layout_marginTop="6dp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/time"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1" />
+                <TextView
+                    android:text="New Text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16dp"
+                    android:layout_marginTop="6dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/time"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1" />
+                <TextView
+                    android:text="New Text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:textColor="@color/fontColor"
+                    android:textSize="16dp"
+                    android:layout_marginTop="6dp" />
+
+            </LinearLayout>
         </LinearLayout>
 
 
@@ -56,22 +133,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginBottom="8dp">
 
         <Button
             android:id="@+id/callButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-
-            android:text="전화걸기"
-            android:onClick="callButtonClicked"/>
+            android:drawableLeft="@drawable/call"
+            android:drawablePadding="-24dp"
+            android:text="CALL"
+            android:onClick="callButtonClicked"
+            android:background="@color/myprimaryColor"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:paddingLeft="24dp"
+            android:contextClickable="false"
+            android:textColor="#ffffff"
+            android:textSize="14dp" />
 
         <Button
             android:id="@+id/reviewButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="후기작성하기"
-            android:onClick="reviewButtonClicked"/>
+            android:drawableLeft="@drawable/review"
+            android:drawablePadding="-24dp"
+            android:text="REVIEW"
+            android:onClick="reviewButtonClicked"
+            android:background="@color/myprimaryColor"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:paddingLeft="24dp"
+            android:contextClickable="false"
+            android:textColor="#ffffff"
+            android:textSize="14dp" />
     </LinearLayout>
 
 </LinearLayout>

@@ -70,11 +70,15 @@ public class ListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int select_id = MapFragment.doc_list.get(position).getId();
                 Intent intent = new Intent(getContext(), DocDetailActivity.class);
-                intent.putExtra("position", select_id-1);
-                startActivity(intent);
+                Log.i("MainActivity","select_id:"+ select_id);
+                if(select_id > 1) {
+                    intent.putExtra("position", select_id - 1);
+                    startActivity(intent);
+                }
             }
         });
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -94,22 +98,12 @@ public class ListFragment extends Fragment {
         listView.smoothScrollToPosition(mSelectedItem);
         adapter.notifyDataSetChanged();
     }
-
-    public void setDistance(double current_latitude, double current_longitude, double dis_latitude, double dis_longitude){
-        cur_latitude = current_latitude;
-        cur_longitude = current_longitude;
-        list_latitude = dis_latitude;
-        list_longitude = dis_longitude;
-        Log.i("MainActivity","setDistance 호출 : " + list_latitude + "," + list_longitude);
-
-    }
     public class DocItemListAdapter extends BaseAdapter {
         private Context mContext;
         LoadingActivity loadingActivity;
         private ArrayList<DocItem> list;
 
         public DocItemListAdapter(Context context, ArrayList<DocItem> datas){
-
             list = datas;
             mContext = context;
         }
@@ -151,7 +145,7 @@ public class ListFragment extends Fragment {
             docAddress.setText(docItem.getAddress());
             // docPhone.setText(docItem.getPhone());
             //docPhone.setText(distance);
-            docPhone.setText(docItem.getDistance());
+            // docPhone.setText(docItem.getDistance());
             notifyDataSetChanged();
             return convertView;
         }
