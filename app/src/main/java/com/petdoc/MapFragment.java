@@ -28,15 +28,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+
 /**
  * Created by STU on 2016-05-03.
  */
@@ -52,6 +46,8 @@ public class MapFragment extends Fragment {
     public static ArrayList<DocItem> doc_list = new ArrayList<>();
     ArrayList<String> distance_list = new ArrayList<>();
     String finalSDistance;
+    private LocationManager manager;
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -82,12 +78,9 @@ public class MapFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         startLocationService();
         checkDangerousPermissions();
-        showDistance();
-
-
-
     }
     private void checkDangerousPermissions() {
         String[] permissions = {
@@ -130,7 +123,6 @@ public class MapFragment extends Fragment {
             }
         }
     }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -140,12 +132,10 @@ public class MapFragment extends Fragment {
             callback = (MapMarkerSelectionCallback) context;
         }
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.i("MainActivity","MapFragment onCreateView 실행");
-
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_map, container, false);
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -163,6 +153,9 @@ public class MapFragment extends Fragment {
         Log.i("MainActivity","MapFragment onResume 실행");
         if (map == null){
             map = fragment.getMap();
+            if(doc_list.size() > 0){
+                doc_list.clear();
+            }
             showItems();
             gpsListener.showCurrentLocation(latitude, longitude);
 
@@ -210,7 +203,7 @@ public class MapFragment extends Fragment {
 
     private void startLocationService() {
         // 위치 관리자 객체 참조
-        LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         // 리스너 객체 생성
         gpsListener = new GPSListener();
         long minTime = 10000;
@@ -237,6 +230,9 @@ public class MapFragment extends Fragment {
     public void onPause() {
         super.onPause();
         map.setMyLocationEnabled(false);
+        Log.i("MainActivity", "MapFragment onPause 실행");
+        manager.removeUpdates(gpsListener);
+
     }
 
     private void showItems() {
@@ -257,24 +253,9 @@ public class MapFragment extends Fragment {
                 marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.pet_marker));
                 map.addMarker(marker);
                 doc_list.add(new DocItem(key.get(i).getId(), key.get(i).getTitle()
-                        ,key.get(i).getAddress(), key.get(i).getPhone(), key.get(i).getLatitude(), key.get(i).getLongitude()));
-                j++;
+                        ,key.get(i).getAddress(), key.get(i).getPhone(), key.get(i).getLatitude(), key.get(i).getLongitude(), distance));
             }
         }
-    }
-    private void showDistance() {
-        ArrayList<DocItem> key = null;
-        key = loadingActivity.docItemArrayList;
-        double distance = 0.0;
-        for (int i = 0; i < key.size(); i++) {
-            // 현재 위치와 거리 계산 후 반경안에 드는 것만 마커를 띄워주기
-            distance = calDistance(latitude, longitude, key.get(i).getLatitude(), key.get(i).getLongitude());
-            if(distance < from_to_distance) { // m 단위
-                Log.i("MainActivity", "showItems 실행");
-                getDistance(latitude, longitude, key.get(i).getLatitude(), key.get(i).getLongitude());
-            }
-        }
-
     }
     public double calDistance(double lat1, double lon1, double lat2, double lon2){
 
@@ -338,140 +319,5 @@ public class MapFragment extends Fragment {
         public void onProviderDisabled(String provider) {
 
         }
-    }
-    private void getDistance(double current_latitude, double current_longitude, double dis_latitude, double dis_longitude) {
-        StringBuilder urlString = null;
-        String distance = null;
-        Log.d("xxx","latitude : "+dis_latitude + ", longitude : " + dis_longitude);
-        urlString = new StringBuilder();
-        urlString.append("http://maps.googleapis.com/maps/api/directions/json?origin=" + current_latitude
-                + "," + current_longitude + "&destination=" + dis_latitude + "," + dis_longitude + "&mode=transit");
-        Log.d("xxx", "URL=" + urlString.toString());
-        ConnectThread thread = new ConnectThread(urlString.toString());
-        thread.start();
-
-        /*
-            final String output = request(urlString.toString());
-            JSONObject object = null;
-            JSONArray legs = null;
-            JSONObject step = null;
-            try {
-                object = new JSONObject(output);
-                JSONArray array = object.getJSONArray("routes");
-                for (int i = 0; i < array.length(); i++) {
-                    legs = ((JSONObject) array.get(i)).getJSONArray("legs");
-                    for (int j = 0; j < legs.length(); j++) {
-                        step = ((JSONObject) legs.get(j)).getJSONObject("distance");
-                        distance = step.getString("text");
-                        Log.d("xxx","distance : " + distance);
-                    }
-                }
-                //Log.d("JSON","array: "+array.toString());
-                //Routes is a combination of objects and arrays
-                //JSONObject routes = array.getJSONObject(0);
-                //Log.d("JSON","routes: "+routes.toString());
-                //JSONArray legs = routes.getJSONArray("legs");
-                //Log.d("JSON","legs: "+legs.toString());
-                //JSONObject steps = legs.getJSONObject(0);
-                //JSONObject distance = steps.getJSONObject("distance");
-                /*//*JSONObject steps = legs.getJSONObject(0);
-                //Log.d("JSON","steps: "+steps.toString());
-                //JSONObject distance = steps.getJSONObject("distance");
-                //Log.d("JSON","distance: "+distance.toString());*//**//*
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-
-        // return distance;
-    }
-    class ConnectThread extends Thread {
-        String urlStr;
-
-        public ConnectThread(String inStr) {
-            urlStr = inStr;
-        }
-        public void run() {
-            try {
-                final String output = request(urlStr);
-                JSONObject object = null;
-                JSONArray legs = null;
-                JSONObject step = null;
-                String distance = null;
-                try {
-                    object = new JSONObject(output);
-                    JSONArray array = object.getJSONArray("routes");
-                    for(int i =0; i < array.length(); i++){
-                        legs = ((JSONObject)array.get(i)).getJSONArray("legs");
-                        for(int j = 0; j < legs.length(); j++){
-                            step = ((JSONObject)legs.get(j)).getJSONObject("distance");
-                            distance = step.getString("text");
-                        }
-                    }
-                    //Log.d("JSON","array: "+array.toString());
-                    //Routes is a combination of objects and arrays
-                    //JSONObject routes = array.getJSONObject(0);
-                    //Log.d("JSON","routes: "+routes.toString());
-                    //JSONArray legs = routes.getJSONArray("legs");
-                    //Log.d("JSON","legs: "+legs.toString());
-                    //JSONObject steps = legs.getJSONObject(0);
-                    //JSONObject distance = steps.getJSONObject("distance");
-            //*JSONObject steps = legs.getJSONObject(0);
-            //Log.d("JSON","steps: "+steps.toString());
-            //JSONObject distance = steps.getJSONObject("distance");
-            //Log.d("JSON","distance: "+distance.toString());*//*
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Message msg = new Message();
-                Bundle b = new Bundle();
-                finalSDistance = distance;
-                Log.i("xxx", "distance : " + finalSDistance);
-                b.putString("My Distance", finalSDistance);
-                msg.setData(b);
-                handler.sendMessage(msg);
-               /* handler.post(new Runnable() {
-                    public void run() {
-                        int i = checkId(id);
-                        doc_list.add(i ,new DocItem(finalSDistance));
-                    }
-                });*/
-
-            } catch(Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        private String request(String urlStr) {
-            StringBuilder output = new StringBuilder();
-            try {
-                URL url = new URL(urlStr);
-                HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-                if (conn != null) {
-                    conn.setConnectTimeout(10000);
-                    conn.setRequestMethod("GET");
-                    conn.setDoInput(true);
-                    conn.setDoOutput(true);
-                    int resCode = conn.getResponseCode();
-                    if (resCode == HttpURLConnection.HTTP_OK) {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream())) ;
-                        String line = null;
-                        while(true) {
-                            line = reader.readLine();
-                            if (line == null) {
-                                break;
-                            }
-                            output.append(line + "\n");
-                        }
-                        reader.close();
-                        conn.disconnect();
-                    }
-                }
-            } catch(Exception ex) {
-                Log.e("SampleHTTP", "Exception in processing response.", ex);
-                ex.printStackTrace();
-            }
-
-            return output.toString();
-        }
-
     }
 }

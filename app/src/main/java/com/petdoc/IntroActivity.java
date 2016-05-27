@@ -43,6 +43,8 @@ public class IntroActivity extends AppCompatActivity {
         ab.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         View view = ab.getCustomView();
         ImageButton searchButton = (ImageButton)view.findViewById(R.id.search_button);
+        ImageButton loginButton = (ImageButton)view.findViewById(R.id.drawer_button);
+        loginButton.setImageResource(R.drawable.intro_login);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,9 +52,13 @@ public class IntroActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
-
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 

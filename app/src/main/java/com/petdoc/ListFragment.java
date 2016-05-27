@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -71,10 +70,8 @@ public class ListFragment extends Fragment {
                 int select_id = MapFragment.doc_list.get(position).getId();
                 Intent intent = new Intent(getContext(), DocDetailActivity.class);
                 Log.i("MainActivity","select_id:"+ select_id);
-                if(select_id > 1) {
-                    intent.putExtra("position", select_id - 1);
-                    startActivity(intent);
-                }
+                intent.putExtra("position", select_id - 1);
+                startActivity(intent);
             }
         });
     }
@@ -98,9 +95,9 @@ public class ListFragment extends Fragment {
         listView.smoothScrollToPosition(mSelectedItem);
         adapter.notifyDataSetChanged();
     }
+
     public class DocItemListAdapter extends BaseAdapter {
         private Context mContext;
-        LoadingActivity loadingActivity;
         private ArrayList<DocItem> list;
 
         public DocItemListAdapter(Context context, ArrayList<DocItem> datas){
@@ -134,15 +131,19 @@ public class ListFragment extends Fragment {
                 LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.listitem, parent, false);
             }
-            ImageView docImage = (ImageView) convertView.findViewById(R.id.dataImage);
+            //ImageView docImage = (ImageView) convertView.findViewById(R.id.dataImage);
             TextView docTitle = (TextView) convertView.findViewById(R.id.dataTitle);
             TextView docAddress = (TextView) convertView.findViewById(R.id.dataAddress);
-            TextView docPhone = (TextView) convertView.findViewById(R.id.dataPhone);
+            TextView docDistance = (TextView) convertView.findViewById(R.id.dataDistance);
+            //TextView docPhone = (TextView) convertView.findViewById(R.id.dataPhone);
             DocItem docItem = list.get(position);
             // 이미지 추가 해야함
             // docImage.setImage
             docTitle.setText(docItem.getTitle());
             docAddress.setText(docItem.getAddress());
+            double distance = docItem.getDistance() / 1000;
+            String s_distance = String.format("%.2f", distance);
+            docDistance.setText(s_distance + "km");
             // docPhone.setText(docItem.getPhone());
             //docPhone.setText(distance);
             // docPhone.setText(docItem.getDistance());

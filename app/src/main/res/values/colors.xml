@@ -18,6 +18,7 @@
     <color name="RED">#FF0000</color>
     <color name="GREEN">#008000</color>
     <color name="BLACK">#000000</color>
+    <color name="iron">#CCCCCC</color>
 
     <!--Intro color -->
     <drawable name="searchButton">#F1C40F</drawable>
