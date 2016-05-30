@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tsengvn.typekit.TypekitContextWrapper;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -83,10 +85,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(enteredUsername.equals("") || enteredPassword.equals("")){
                     Toast.makeText(LoginActivity.this, "Username or password must be filled", Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
                     return;
+
                 }
                 if(enteredUsername.length() <= 1 || enteredPassword.length() <= 1){
                     Toast.makeText(LoginActivity.this, "Username or password length must be greater than one", Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
                     return;
                 }
                 // request authentication with remote server4
@@ -100,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -200,6 +206,11 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return returnedResult;
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
     }
 
 

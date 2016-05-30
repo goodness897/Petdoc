@@ -1,5 +1,6 @@
 package com.petdoc;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -12,24 +13,24 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.google.android.gms.maps.MapsInitializer;
+import com.tsengvn.typekit.TypekitContextWrapper;
 
-public class MainActivity extends AppCompatActivity implements MapFragment.MapMarkerSelectionCallback {
+public class MainActivity extends AppCompatActivity implements MainMapFragment.MapMarkerSelectionCallback {
 
     private ListFragment listFragment;
-    private MapFragment mapFragment;
+    private MainMapFragment mainMapFragment;
     private ActionBar ab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ab = this.getSupportActionBar();
         setCustomActionBar(ab);
 
         FragmentManager manager = getSupportFragmentManager();
         listFragment = (ListFragment) manager.findFragmentById(R.id.listFragment);
-        mapFragment = (MapFragment) manager.findFragmentById(R.id.mapFragment);
+        mainMapFragment = (MainMapFragment) manager.findFragmentById(R.id.mapFragment);
         try {
             MapsInitializer.initialize(getApplicationContext());
         } catch (Exception e) {
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements MapFragment.MapMa
     protected void onPause() {
         super.onPause();
         Log.i("MainActivity", "onPause() 실행");
-        finish();
     }
 
     @Override
@@ -83,4 +83,8 @@ public class MainActivity extends AppCompatActivity implements MapFragment.MapMa
         });
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
+    }
 }

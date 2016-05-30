@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Petdoc</string>
+    <string name="app_name">PETDOC</string>
     <string name="app_namek">펫독</string>
     <string name="_24">24시 병원</string>
     <string name="searchHospital">내 주변 병원 찾기</string>
@@ -20,5 +20,7 @@
     <string name="welcome">WELCOME</string>
     <string name="is_login">You have been successfully login </string>
     <string name="sign_up">Sign Up Now</string>
+    <string name="signup_success">회원가입이 성공적으로 되었습니다.</string>
+    <string name="toHome">홈으로</string>
 
 </resources>

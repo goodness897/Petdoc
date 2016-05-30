@@ -2,36 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:background="#ffffff"
     android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:layout_weight="2">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/dataTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="16dp"
+            android:textSize="24sp"
             android:padding="4dp"
             android:textColor="@drawable/bg_key"
             android:layout_marginLeft="12dp"
             android:layout_weight="4"/>
-
-        <TextView
-            android:id="@+id/dataDistance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="16dp"
-            android:padding="4dp"
-            android:textColor="@drawable/bg_key"
-            android:layout_marginLeft="12dp"
-            android:layout_weight="1"/>
 
     </LinearLayout>
     <LinearLayout
@@ -39,11 +32,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="4dp">
-        <TextView
-            android:id="@+id/dataAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp" />
+
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
@@ -60,5 +49,38 @@
             android:focusableInTouchMode="false"
             android:isIndicator="true"
             />
+    </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="4"
+        android:gravity="center">
+
+
+        <TextView
+            android:id="@+id/dataDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="26sp"
+            android:padding="4dp"
+            android:textColor="@color/button_material_dark"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="2"
+            android:text="30"
+            android:gravity="right" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:padding="4dp"
+            android:textColor="@color/button_material_dark"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="0"
+            android:text="KM"
+            android:gravity="right" />
+
     </LinearLayout>
 </LinearLayout>

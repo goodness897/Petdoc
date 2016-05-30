@@ -1,10 +1,13 @@
 package com.petdoc;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+
+import com.tsengvn.typekit.TypekitContextWrapper;
 
 import java.util.ArrayList;
 
@@ -202,5 +205,10 @@ public class LoadingActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), IntroActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
     }
 }

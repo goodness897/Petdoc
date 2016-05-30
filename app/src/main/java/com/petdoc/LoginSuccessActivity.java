@@ -71,7 +71,6 @@ public class LoginSuccessActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-
         alertDialogBuilder.setNegativeButton("No",
                 new DialogInterface.OnClickListener() {
                     @Override

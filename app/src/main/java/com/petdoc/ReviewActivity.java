@@ -13,7 +13,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
-import android.widget.Toast;
+
+import com.tsengvn.typekit.TypekitContextWrapper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -85,8 +86,6 @@ public class ReviewActivity extends AppCompatActivity {
         String content = contentEdit.getText().toString();
         AsyncDataClass asyncRequestObject = new AsyncDataClass();
         asyncRequestObject.execute(serverUrl, String.valueOf(doc_id), loggedUser, content);
-        Intent intent = new Intent(getApplicationContext(), LoginSuccessActivity.class);
-        startActivity(intent);
         finish();
     }
     private class AsyncDataClass extends AsyncTask<String, Void, String> {
@@ -130,16 +129,13 @@ public class ReviewActivity extends AppCompatActivity {
             super.onPostExecute(result);
             System.out.println("Resulted Value: " + result);
             if(result.equals("") || result == null){
-                Toast.makeText(ReviewActivity.this, "Server connection failed", Toast.LENGTH_LONG).show();
                 return;
             }
             int jsonResult = returnParsedJsonObject(result);
             if(jsonResult == 0){
-                Toast.makeText(ReviewActivity.this, "Invalid content.", Toast.LENGTH_LONG).show();
                 return;
             }
             if(jsonResult == 1){
-                Toast.makeText(ReviewActivity.this, "You have been successfully Registered", Toast.LENGTH_LONG).show();
             }
         }
         private StringBuilder inputStreamToString(InputStream is) {
@@ -167,5 +163,10 @@ public class ReviewActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return returnedResult;
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
     }
 }

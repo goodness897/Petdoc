@@ -21,6 +21,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.tsengvn.typekit.TypekitContextWrapper;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -51,26 +53,29 @@ public class DocDetailActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doc_detail);
+        Log.i("DocDetailActivity", "onCreate 실행");
+
 
         SharedPreferences sharedPreferences = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         login_success = sharedPreferences.getBoolean(Config.LOGGEDIN_SHARED_PREF, false);
         ab = this.getSupportActionBar();
         setCustomActionBar(ab);
+
         titleTextView = (TextView) findViewById(R.id.dataTitle);
         addressTextView = (TextView) findViewById(R.id.dataAddress);
-        Button seeReviewButton = (Button) findViewById(R.id.seeReviewButton);
-        task = new phpDown();
-        task.execute(serverUrl);
+
 
         listView = (ListView)findViewById(R.id.review_listView);
         Intent intent = getIntent();
         if (intent != null) {
             position = intent.getIntExtra("position", 0);
             setData(position);
+            System.out.println("position : " + position);
         }
 
         callButton = (Button) findViewById(R.id.callButton);
@@ -88,6 +93,9 @@ public class DocDetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i("DocDetailActivity", "onResume 실행");
+        task = new phpDown();
+        task.execute(serverUrl);
 
         adapter = new ReViewItemListAdapter(this, items);
         listView.setAdapter(adapter);
@@ -110,11 +118,12 @@ public class DocDetailActivity extends AppCompatActivity {
             intent.putExtra("doc_id", loadingActivity.docItemArrayList.get(position).getId());
             startActivity(intent);
         }
+
         else {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
+            finish();
         }
-
 
     }
     private void setCustomActionBar(ActionBar ab) {
@@ -152,6 +161,14 @@ public class DocDetailActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.i("DocDetailActivity", "onPause 실행");
+
+    }
+
+    public void onMapButtonClicked(View view) {
+        Intent intent = new Intent(getApplicationContext(), DetailMapActivity.class);
+        intent.putExtra("position", position);
+        startActivity(intent);
     }
 
     private class phpDown extends AsyncTask<String, Integer, String> {
@@ -211,7 +228,9 @@ public class DocDetailActivity extends AppCompatActivity {
                         content = jo.getString("content");
                         dateTime = jo.getString("created_at");
                         doc_id = Integer.valueOf(str_doc_id);
-                        items.add(new ReviewItem(doc_id, user_id, content, dateTime));
+                        if(doc_id == (position + 1)){
+                            items.add(new ReviewItem(doc_id, user_id, content, dateTime));
+                        }
                     }
                 } else {
                     items.clear();
@@ -222,7 +241,9 @@ public class DocDetailActivity extends AppCompatActivity {
                         content = jo.getString("content");
                         dateTime = jo.getString("created_at");
                         doc_id = Integer.valueOf(str_doc_id);
-                        items.add(new ReviewItem(doc_id, user_id, content, dateTime));
+                        if(doc_id == (position + 1)){
+                            items.add(new ReviewItem(doc_id, user_id, content, dateTime));
+                        }
                     }
                 }
 
@@ -260,6 +281,7 @@ public class DocDetailActivity extends AppCompatActivity {
             return list.size();
 
         }
+
         @Override
         public Object getItem(int position) {
             return list.get(position);
@@ -276,21 +298,22 @@ public class DocDetailActivity extends AppCompatActivity {
                 convertView = inflater.inflate(R.layout.reviewlistitem, parent, false);
             }
 
-
             TextView userId = (TextView)convertView.findViewById(R.id.userId);
             TextView reviewDate = (TextView)convertView.findViewById(R.id.reviewDate);
             TextView reviewContent = (TextView)convertView.findViewById(R.id.reviewcontent);
-            /*if(items.get(position).getDoc_id() == loadingActivity.docItemArrayList.get(position).getId()){
-                userId.setText(items.get(position).getUser_id());
-                reviewDate.setText(items.get(position).getDateTime());
-                reviewContent.setText(items.get(position).getContent());
-            }*/
-                userId.setText(list.get(position).getUser_id());
-                reviewDate.setText(list.get(position).getDateTime());
-                reviewContent.setText(list.get(position).getContent());
-                notifyDataSetChanged();
+
+            userId.setText(items.get(position).getUser_id());
+            reviewDate.setText(items.get(position).getDateTime());
+            reviewContent.setText(items.get(position).getContent());
+            notifyDataSetChanged();
+
+
 
             return convertView;
         }
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
     }
 }

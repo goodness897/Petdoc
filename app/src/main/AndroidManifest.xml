@@ -52,6 +52,7 @@
             android:theme="@style/CustomTheme" />
         <activity
             android:name=".IntroActivity"
+            android:configChanges="keyboardHidden|orientation"
             android:theme="@style/CustomTheme" />
         <activity
             android:name=".SearchActivity"
@@ -67,7 +68,13 @@
             android:name=".RegisterActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity android:name=".ReviewActivity"
+        <activity
+            android:name=".ReviewActivity"
+            android:theme="@style/CustomTheme" />
+        <activity
+            android:name=".SignupSuccessActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
+        <activity android:name=".DetailMapActivity"
             android:theme="@style/CustomTheme"></activity>
     </application>
 

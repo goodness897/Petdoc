@@ -1,5 +1,6 @@
 package com.petdoc;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.tsengvn.typekit.TypekitContextWrapper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -55,6 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -128,10 +132,11 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
             if(jsonResult == 1){
-                Intent intent = new Intent(RegisterActivity.this, LoginSuccessActivity.class);
+                Intent intent = new Intent(RegisterActivity.this, SignupSuccessActivity.class);
                 intent.putExtra("USERNAME", enteredUsername);
                 intent.putExtra("MESSAGE", "You have been successfully Registered");
                 startActivity(intent);
+                finish();
             }
         }
         private StringBuilder inputStreamToString(InputStream is) {
@@ -160,4 +165,11 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return returnedResult;
     }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(TypekitContextWrapper.wrap(newBase));
+    }
+
+
 }

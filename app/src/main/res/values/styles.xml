@@ -44,4 +44,17 @@
 
     </style>
 
+    <style name="reviewText" parent="TextAppearance.AppCompat">
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">#404040</item>
+        <item name="android:textSize">20sp</item>
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+        <item name="colorAccent">#404040</item>
+        <item name="colorControlNormal">#404040</item>
+        <item name="colorControlActivated">#404040</item>
+        <item name="colorControlHighlight">#404040</item>
+
+
+    </style>
+
 </resources>

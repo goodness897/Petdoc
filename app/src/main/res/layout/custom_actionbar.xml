@@ -15,7 +15,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/fontColor"
         android:textStyle="bold" />
-
     <ImageButton
         android:id="@+id/drawer_button"
         android:layout_width="24dp"
