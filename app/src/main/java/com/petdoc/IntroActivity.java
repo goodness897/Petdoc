@@ -32,6 +32,9 @@ public class IntroActivity extends AppCompatActivity {
 
     public void petCastButtonClicked(View view) {
 
+        Intent intent = new Intent(getApplicationContext(), PetcastActivity.class);
+        startActivity(intent);
+
     }
 
     public void eventButtonClicked(View view) {

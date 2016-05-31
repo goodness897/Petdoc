@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * Created by STU on 2016-05-03.
  */
 public class MainMapFragment extends Fragment {
-    private double from_to_distance = 10000;
+    private double from_to_distance = 30000;
     private SupportMapFragment fragment;
     private GoogleMap map;
     private MarkerOptions marker;

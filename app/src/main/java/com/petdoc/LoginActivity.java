@@ -84,13 +84,13 @@ public class LoginActivity extends AppCompatActivity {
                 progressDialog.show();
 
                 if(enteredUsername.equals("") || enteredPassword.equals("")){
-                    Toast.makeText(LoginActivity.this, "Username or password must be filled", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "아이디와 비밀번호를 입력해주세요.", Toast.LENGTH_LONG).show();
                     progressDialog.dismiss();
                     return;
 
                 }
                 if(enteredUsername.length() <= 1 || enteredPassword.length() <= 1){
-                    Toast.makeText(LoginActivity.this, "Username or password length must be greater than one", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "아이디와 비밀번호는 1자리 이상이어야합니다.", Toast.LENGTH_LONG).show();
                     progressDialog.dismiss();
                     return;
                 }
@@ -160,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
 
             int jsonResult = returnParsedJsonObject(result);
             if(jsonResult == 0){
-                Toast.makeText(LoginActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "잘못된 입력입니다.", Toast.LENGTH_LONG).show();
                 return;
             }
             if(jsonResult == 1){ // login 성공했을 때

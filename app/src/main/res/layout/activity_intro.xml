@@ -48,7 +48,7 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:onClick="searchButtonClicked"
+            android:onClick="petCastButtonClicked"
             android:drawableTop="@drawable/petcast"
             android:padding="10dp"
             android:drawablePadding="10dp"
