@@ -9,12 +9,22 @@ public class ReviewItem {
     private String user_id;
     private String content;
     private String dateTime;
+    private float rating;
 
-    public ReviewItem(int doc_id, String user_id, String content, String dateTime) {
+    public ReviewItem(int doc_id, String user_id, String content, String dateTime, float rating ) {
         this.content = content;
         this.dateTime = dateTime;
         this.doc_id = doc_id;
         this.user_id = user_id;
+        this.rating = rating;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
     public String getContent() {

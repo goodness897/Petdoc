@@ -19,6 +19,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.tsengvn.typekit.TypekitContextWrapper;
@@ -51,8 +52,6 @@ public class DocDetailActivity extends AppCompatActivity {
 
     private boolean buttonFlag = false;
     private ProgressDialog progressDialog;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +107,7 @@ public class DocDetailActivity extends AppCompatActivity {
             titleTextView.setText(loadingActivity.docItemArrayList.get(position).getTitle());
             addressTextView.setText(loadingActivity.docItemArrayList.get(position).getAddress());
             phone = loadingActivity.docItemArrayList.get(position).getPhone();
+
         }
     }
 
@@ -177,6 +177,7 @@ public class DocDetailActivity extends AppCompatActivity {
         String dateTime;
         String user_id;
         int doc_id;
+        float rating;
 
         @Override
         protected void onPreExecute() {
@@ -220,6 +221,7 @@ public class DocDetailActivity extends AppCompatActivity {
                 JSONObject root = new JSONObject(jsonHtml.toString());
                 JSONArray ja = root.getJSONArray("results");
                 String str_doc_id;
+                String str_rating;
                 if(items.size() == 0) {
                     for (int i = 0; i < ja.length(); i++) {
                         JSONObject jo = ja.getJSONObject(i);
@@ -227,9 +229,11 @@ public class DocDetailActivity extends AppCompatActivity {
                         user_id = jo.getString("user_id");
                         content = jo.getString("content");
                         dateTime = jo.getString("created_at");
+                        str_rating = jo.getString("rating");
                         doc_id = Integer.valueOf(str_doc_id);
+                        rating = Integer.valueOf(str_rating);
                         if(doc_id == (position + 1)){
-                            items.add(new ReviewItem(doc_id, user_id, content, dateTime));
+                            items.add(new ReviewItem(doc_id, user_id, content, dateTime, rating));
                         }
                     }
                 } else {
@@ -240,9 +244,11 @@ public class DocDetailActivity extends AppCompatActivity {
                         user_id = jo.getString("user_id");
                         content = jo.getString("content");
                         dateTime = jo.getString("created_at");
+                        str_rating = jo.getString("rating");
                         doc_id = Integer.valueOf(str_doc_id);
+                        rating = Integer.valueOf(str_rating);
                         if(doc_id == (position + 1)){
-                            items.add(new ReviewItem(doc_id, user_id, content, dateTime));
+                            items.add(new ReviewItem(doc_id, user_id, content, dateTime, rating));
                         }
                     }
                 }
@@ -301,13 +307,13 @@ public class DocDetailActivity extends AppCompatActivity {
             TextView userId = (TextView)convertView.findViewById(R.id.userId);
             TextView reviewDate = (TextView)convertView.findViewById(R.id.reviewDate);
             TextView reviewContent = (TextView)convertView.findViewById(R.id.reviewcontent);
+            RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.review_ratingBar);
 
             userId.setText(items.get(position).getUser_id());
             reviewDate.setText(items.get(position).getDateTime());
             reviewContent.setText(items.get(position).getContent());
+            ratingBar.setRating(items.get(position).getRating());
             notifyDataSetChanged();
-
-
 
             return convertView;
         }

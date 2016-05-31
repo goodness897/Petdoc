@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -130,9 +131,13 @@ public class ListFragment extends Fragment {
             //TextView docAddress = (TextView) convertView.findViewById(R.id.dataAddress);
             TextView docDistance = (TextView) convertView.findViewById(R.id.dataDistance);
             //TextView docPhone = (TextView) convertView.findViewById(R.id.dataPhone);
+            RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.list_ratingBar);
+            TextView ratingCount = (TextView) convertView.findViewById(R.id.ratingCount);
             DocItem docItem = list.get(position);
             // 이미지 추가 해야함
             // docImage.setImage
+            ratingCount.setText("(" + docItem.getCount() + ")");
+
             docTitle.setText(docItem.getTitle());
             //docAddress.setText(docItem.getAddress());
             double distance = docItem.getDistance() / 1000;

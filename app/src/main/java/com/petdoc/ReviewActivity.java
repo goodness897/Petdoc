@@ -52,6 +52,7 @@ public class ReviewActivity extends AppCompatActivity {
     private ActionBar ab;
     private RatingBar ratingBar;
     private final String serverUrl = "http://192.168.11.20/review/index.php";
+    private final String ratingUrl = "http://192.168.11.20/rating/index.php";
     private EditText contentEdit;
     private int doc_id;
     String loggedUser;
@@ -79,7 +80,6 @@ public class ReviewActivity extends AppCompatActivity {
         doc_id = intent.getIntExtra("doc_id", 0);
         mPhotoImageView = (ImageView)findViewById(R.id.addReviewimg);
     }
-
     private void setCustomActionBar(ActionBar ab) {
 
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -98,15 +98,16 @@ public class ReviewActivity extends AppCompatActivity {
             }
         });
     }
-
     public void saveReviewButtonClicked(View view) {
 
         String content = contentEdit.getText().toString();
         AsyncDataClass asyncRequestObject = new AsyncDataClass();
-        asyncRequestObject.execute(serverUrl, String.valueOf(doc_id), loggedUser, content);
+        AsyncReviewClass asyncRequestReview = new AsyncReviewClass();
+        asyncRequestObject.execute(serverUrl, String.valueOf(doc_id), loggedUser, content, String.valueOf(ratingBar.getRating()));
+        asyncRequestReview.execute(ratingUrl, String.valueOf(doc_id), String.valueOf(ratingBar.getRating()));
+        System.out.println(doc_id + "," + ratingBar.getRating());
         finish();
     }
-
     public void onSetImageButtonClicked(View view) {
 
         DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
@@ -256,6 +257,7 @@ public class ReviewActivity extends AppCompatActivity {
                 nameValuePairs.add(new BasicNameValuePair("doc_id", params[1]));
                 nameValuePairs.add(new BasicNameValuePair("user_id", params[2]));
                 nameValuePairs.add(new BasicNameValuePair("content", params[3]));
+                nameValuePairs.add(new BasicNameValuePair("rating", params[4]));
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8)); // 한글 인코딩
 
                 HttpResponse response = httpClient.execute(httpPost);
@@ -286,6 +288,71 @@ public class ReviewActivity extends AppCompatActivity {
                 return;
             }
             if(jsonResult == 1){
+            }
+        }
+        private StringBuilder inputStreamToString(InputStream is) {
+            String rLine = "";
+            StringBuilder answer = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            try {
+                while ((rLine = br.readLine()) != null) {
+                    answer.append(rLine);
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return answer;
+        }
+    }
+    private class AsyncReviewClass extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            HttpParams httpParameters = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
+            HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+
+            HttpClient httpClient = new DefaultHttpClient(httpParameters);
+            HttpPost httpPost = new HttpPost(params[0]);
+
+            String jsonResult = "";
+            try {
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                nameValuePairs.add(new BasicNameValuePair("doc_id", params[1]));
+                nameValuePairs.add(new BasicNameValuePair("rating", params[2]));
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, HTTP.UTF_8)); // 한글 인코딩
+
+                HttpResponse response = httpClient.execute(httpPost);
+
+                jsonResult = inputStreamToString(response.getEntity().getContent()).toString();
+                System.out.println("Returned Json object " + jsonResult.toString());
+
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return jsonResult;
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            System.out.println("Resulted Value: " + result);
+            if(result.equals("") || result == null){
+                return;
+            }
+            int jsonResult = returnParsedJsonObject(result);
+            if(jsonResult == 0){
+                return;
+            }
+            if(jsonResult == 1){
+
             }
         }
         private StringBuilder inputStreamToString(InputStream is) {

@@ -12,6 +12,8 @@ public class DocItem {
     private double latitude;
     private double longitude;
     private double distance;
+    private float rating;
+    private int count;
 
     public DocItem(int id, String title, String address, String phone, double latitude, double longitude) {
         this.id = id;
@@ -21,7 +23,7 @@ public class DocItem {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-    public DocItem(int id, String title, String address, String phone, double latitude, double longitude, double distance) {
+    public DocItem(int id, String title, String address, String phone, double latitude, double longitude, double distance, float rating, int count) {
         this.id = id;
         this.title = title;
         this.address = address;
@@ -29,6 +31,24 @@ public class DocItem {
         this.latitude = latitude;
         this.longitude = longitude;
         this.distance = distance;
+        this.rating = rating;
+        this.count = count;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
     public double getDistance() {

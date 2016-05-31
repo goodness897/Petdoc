@@ -252,7 +252,7 @@ public class MainMapFragment extends Fragment {
                 marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_dog));
                 map.addMarker(marker);
                 doc_list.add(new DocItem(key.get(i).getId(), key.get(i).getTitle()
-                        ,key.get(i).getAddress(), key.get(i).getPhone(), key.get(i).getLatitude(), key.get(i).getLongitude(), distance));
+                        ,key.get(i).getAddress(), key.get(i).getPhone(), key.get(i).getLatitude(), key.get(i).getLongitude(), distance, key.get(i).getRating(), key.get(i).getCount()));
             }
         }
     }
